@@ -14,6 +14,10 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import CreateCase from "./components/CreateCase";
 import UpdateCase from "./components/UpdateCase";
+import UserList from "./components/UserList";
+import CreateUser from "./components/CreateUser";
+import UpdateUser from "./components/UpdateUser";
+import ResetPwd from "./components/ResetPwd";
 
 Vue.use(ElementUI);
 Vue.use(VueRouter);
@@ -23,6 +27,7 @@ axios.defaults.withCredentials = true;
 Vue.prototype.$bus = new Vue();
 Vue.prototype.$axios = axios;
 axios.defaults.baseURL = "http://127.0.0.1:8000/";
+// axios.defaults.baseURL = "http://121.196.217.69:8082/";
 axios.defaults.headers.post['Content-Type'] = 'application/json; charset=UTF-8';
 axios.defaults.headers.get['Content-Type'] = 'application/json; charset=UTF-8';
 axios.defaults.headers.put['Content-Type'] = 'application/json; charset=UTF-8';
@@ -60,9 +65,30 @@ const router = new VueRouter({
       path: "/add_case/", component: CreateCase, meta: {requireAuth: true}
     },
     {
-      path: "/update_testcase/:id", component: UpdateCase, meta: {requireAuth: true}
+      path: "/update_testcase/:id",
+      component: UpdateCase,
+      meta: {requireAuth: true}
     },
-
+    {
+      path: "/user/",
+      component: UserList,
+      meta: {requireAuth: true}
+    },
+    {
+      path: "/add_user/",
+      component: CreateUser,
+      meta: {requireAuth: true}
+    },
+    {
+      path: "/user_update/:id",
+      component: UpdateUser,
+      meta: {requireAuth: true}
+    },
+    {
+      path: "/pwd_reset/:id",
+      component: ResetPwd,
+      meta: {requireAuth: true}
+    },
 
   ]
 });

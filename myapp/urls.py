@@ -2,7 +2,8 @@ from django.conf.urls import url
 from django.contrib import admin
 from myapp.views import InterfaceProject, InterfaceCase, UpdateProject, \
     UpdateCase, DeleteProject, DeleteCase, DeleteProjects, DeleteCases, \
-    SearchProject, SearchCase
+    SearchProject, SearchCase, UserList, SearchUser, UpdateUser, DeleteUser, \
+    DeleteUsers, ResetPwd
 from .runScripts import Register, RunCase
 from rest_framework_jwt.views import obtain_jwt_token
 
@@ -31,6 +32,15 @@ urlpatterns = [
     url(r'^search_case/$', SearchCase.as_view({'get': 'list'}),
         name='search_case'),
     url(r'^register/$', Register.Register.as_view(), name='register'),
-    url(r'^run/$', RunCase.RunCase.as_view(), name='run_case')
-
+    url(r'^run/$', RunCase.RunCase.as_view(), name='run_case'),
+    url(r'^user_list/$', UserList.as_view(), name='user_list'),
+    url(r'^create_user/$', Register.Register.as_view(), name='user_list'),
+    url(r'^search_user/$', SearchUser.as_view({'get': 'list'}),
+        name='search_user'),
+    url(r'^update_user/(?P<pk>\d+)$', UpdateUser.as_view(), name='update_user'),
+    url(r'^delete_user/(?P<pk>\d+)$', DeleteUser.as_view(),
+        name='delete_user'),
+    url(r'^delete_users/$', DeleteUsers.as_view(),
+        name='delete_users'),
+    url(r'^reset_pwd/(?P<pk>\d+)$', ResetPwd.as_view(), name='reset_pwd')
 ]

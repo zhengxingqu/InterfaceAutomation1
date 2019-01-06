@@ -1,16 +1,10 @@
 <template>
   <div class="login-wrap" style="text-align: center">
-    <h2>注册页面</h2>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="0px"
              class="demo-ruleForm">
       <el-form-item prop="username">
-        <el-input v-model="ruleForm.username" placeholder="用户名"
+        用户名：<el-input v-model="ruleForm.username" placeholder="用户名"
                   style="width: 300px"></el-input>
-      </el-form-item>
-      <el-form-item prop="password">
-        <el-input type="password" placeholder="密码" v-model="ruleForm.password"
-                  style="width: 300px"
-                  @keyup.enter.native="submitForm('ruleForm')"></el-input>
       </el-form-item>
       <el-form-item prop="sex">
         性别：
@@ -18,7 +12,7 @@
         <el-radio v-model="ruleForm.sex" label="女">女</el-radio>
       </el-form-item>
       <el-form-item prop="iphone">
-        <el-input placeholder="手机号" v-model="ruleForm.iphone"
+        手机号：<el-input placeholder="手机号" v-model="ruleForm.iphone"
                   style="width: 300px"></el-input>
       </el-form-item>
       <el-form-item prop="iphone">
@@ -39,7 +33,7 @@
         </el-button>
       </div>
       <div>
-        <router-link to="/login/">返回</router-link>
+        <router-link to="/user/">返回</router-link>
       </div>
     </el-form>
   </div>
@@ -51,17 +45,13 @@
       return {
         ruleForm: {
           username: '',
-          password: '',
-          sex: '男',
+          sex: '',
           iphone: '',
           head_portrait: ''
         },
         rules: {
           username: [
             {required: true, message: '请输入用户名', trigger: 'blur'}
-          ],
-          password: [
-            {required: true, message: '请输入密码', trigger: 'blur'}
           ],
           sex: [
             {required: true, message: '请选择性别', trigger: 'blur'}
@@ -71,8 +61,12 @@
           ],
 
         },
-        state: false
+        state: false,
+        sites: []
       }
+    },
+    mounted: function () {
+      this.getuser();
     },
     methods: {
       submitForm(formName) {
@@ -80,8 +74,9 @@
         _this.state = false;
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.$axios.post('register/', _this.ruleForm).then((res) => {
-              this.$router.push('/login/');
+            var id = _this.$route.params.id;
+            this.$axios.put('update_user/' + id, _this.ruleForm).then((res) => {
+              this.$router.push('/user/');
             }).catch((err) => {
               _this.state = true;
               console.log(err);
@@ -91,6 +86,15 @@
             return false;
           }
         });
+      },
+      getuser() {
+        var id = this.$route.params.id;
+        this.$axios.get('update_user/' + id).then((res) => {
+          this.sites = res.data;
+          this.ruleForm.username = this.sites.username;
+          this.ruleForm.sex = this.sites.sex;
+          this.ruleForm.iphone = this.sites.iphone;
+        })
       },
       handleAvatarSuccess(res, file) {
         this.ruleForm.head_portrait = URL.createObjectURL(file.raw);

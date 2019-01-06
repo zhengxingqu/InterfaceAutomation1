@@ -14,9 +14,9 @@ class LargeResultsSetPagination(LimitOffsetPagination):
         if Response.status_code == 200 or Response.status_code == 204:
             code = 200
             msg = 'success'
-        if not results:
-            code = 404
-            msg = "data not found"
+        # if not results:
+        #     code = 404
+        #     msg = "data not found"
         if Response.status_code == 400:
             msg = results
 

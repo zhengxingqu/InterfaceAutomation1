@@ -1,14 +1,13 @@
 <template>
   <div class="login-wrap" style="text-align: center">
-    <h2>注册页面</h2>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="0px"
              class="demo-ruleForm">
       <el-form-item prop="username">
-        <el-input v-model="ruleForm.username" placeholder="用户名"
+        用户名：<el-input v-model="ruleForm.username" placeholder="用户名"
                   style="width: 300px"></el-input>
       </el-form-item>
       <el-form-item prop="password">
-        <el-input type="password" placeholder="密码" v-model="ruleForm.password"
+        密码：<el-input type="password" placeholder="密码" v-model="ruleForm.password"
                   style="width: 300px"
                   @keyup.enter.native="submitForm('ruleForm')"></el-input>
       </el-form-item>
@@ -18,7 +17,7 @@
         <el-radio v-model="ruleForm.sex" label="女">女</el-radio>
       </el-form-item>
       <el-form-item prop="iphone">
-        <el-input placeholder="手机号" v-model="ruleForm.iphone"
+        手机号：<el-input placeholder="手机号" v-model="ruleForm.iphone"
                   style="width: 300px"></el-input>
       </el-form-item>
       <el-form-item prop="iphone">
@@ -39,7 +38,7 @@
         </el-button>
       </div>
       <div>
-        <router-link to="/login/">返回</router-link>
+        <router-link to="/user/">返回</router-link>
       </div>
     </el-form>
   </div>
@@ -81,7 +80,7 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.$axios.post('register/', _this.ruleForm).then((res) => {
-              this.$router.push('/login/');
+              this.$router.push('/user/');
             }).catch((err) => {
               _this.state = true;
               console.log(err);

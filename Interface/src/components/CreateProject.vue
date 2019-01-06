@@ -16,7 +16,7 @@
                 </router-link>
               </el-dropdown-item>
               <el-dropdown-item>
-                <router-link to="/user_list/"
+                <router-link to="/user/"
                              style="text-decoration: none;">测试套件
                 </router-link>
               </el-dropdown-item>
@@ -51,35 +51,53 @@
           <el-form :model="ruleForm" :rules="rules" ref="ruleForm"
                    label-width="0px" class="demo-ruleForm">
             <el-form-item prop="project_name">
-            <label for="project_name" style="padding-left: 400px">项目名称：</label>
-            <el-input name="project_name" v-model="ruleForm.project_name"
-                      style="width: 300px;"></el-input>
-              </el-form-item>
+              <label for="project_name"
+                     style="padding-left: 400px">项目名称：</label>
+              <el-input name="project_name" v-model="ruleForm.project_name"
+                        style="width: 300px;"></el-input>
+            </el-form-item>
             <span v-if="error_message.project_name !== ''"
                   style="color: red; padding-left: 550px">{{error_message.project_name}}</span>
             <el-form-item prop="permanent_address">
-            <label for="permanent_address"
-                   style="padding-left: 430px">域名：</label>
-            <el-input name="permanent_address"
-                      v-model="ruleForm.permanent_address"
-                      style="width: 300px"
-                      @keyup.enter.native="addproject('ruleForm')"></el-input>
-              </el-form-item>
+              <label for="permanent_address"
+                     style="padding-left: 430px">域名：</label>
+              <el-input name="permanent_address"
+                        v-model="ruleForm.permanent_address"
+                        style="width: 300px"
+                        @keyup.enter.native="addproject('ruleForm')"></el-input>
+            </el-form-item>
             <span v-if="error_message.permanent_address !== ''"
                   style="color: red; padding-left: 550px">{{error_message.permanent_address}}</span>
-            <el-form-item prop="request_header">
-            <label for="request_header"
-                   style="padding-left: 430px">请求头：</label>
-            <!--<el-input name="request_header"-->
-                      <!--v-model="ruleForm.request_header"-->
-                      <!--style="width: 300px"-->
-                      <!--@keyup.enter.native="addproject('ruleForm')"></el-input>-->
-              <el-select v-model="ruleForm.request_header">
-                <el-option v-for="item in header_list" :key="item" :value="item">
+            <el-form-item prop="login_way">
+              <label for="login_way"
+                     style="padding-left: 430px">登陆方式：</label>
+              <!--<el-input name="request_header"-->
+              <!--v-model="ruleForm.request_header"-->
+              <!--style="width: 300px"-->
+              <!--@keyup.enter.native="addproject('ruleForm')"></el-input>-->
+              <el-select v-model="ruleForm.login_way">
+                <el-option v-for="item in loginway_list" :key="item"
+                           :value="item">
                   {{item}}
                 </el-option>
               </el-select>
-              </el-form-item>
+            </el-form-item>
+            <span v-if="error_message.login_way !== ''"
+                  style="color: red; padding-left: 550px">{{error_message.login_way}}</span>
+            <el-form-item prop="request_header">
+              <label for="request_header"
+                     style="padding-left: 430px">请求头：</label>
+              <!--<el-input name="request_header"-->
+              <!--v-model="ruleForm.request_header"-->
+              <!--style="width: 300px"-->
+              <!--@keyup.enter.native="addproject('ruleForm')"></el-input>-->
+              <el-select v-model="ruleForm.request_header">
+                <el-option v-for="item in header_list" :key="item"
+                           :value="item">
+                  {{item}}
+                </el-option>
+              </el-select>
+            </el-form-item>
             <span v-if="error_message.request_header !== ''"
                   style="color: red; padding-left: 550px">{{error_message.request_header}}</span>
             <br>
@@ -87,7 +105,7 @@
                        size="middle"
                        style="margin-left: 500px">保存
             </el-button>
-            <router-link to="/url_list/">
+            <router-link to="/project/">
               <el-button value="取消" size="middle" style="margin-left: 80px">取消
               </el-button>
             </router-link>
@@ -107,6 +125,7 @@
           project_name: '',
           permanent_address: '',
           request_header: '',
+          login_way: '',
         },
         rules: {
           project_name: [
@@ -117,10 +136,15 @@
           ],
           request_header: [
             {required: true, message: '请输入请求头', trigger: 'blur'}
+          ],
+          login_way: [
+            {required: true, message: '请输入登陆方式', trigger: 'blur'}
           ]
         },
         error_message: [],
-        header_list: ['cookies', 'JWT']
+        loginway_list: ['cookies', 'JWT'],
+        header_list: ["{'Content-Type': 'application/json'}",
+          "{'Content-Type: application/x-www-form-urlencoded'}"]
       }
     },
     mounted: function () {

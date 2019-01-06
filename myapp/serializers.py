@@ -22,12 +22,13 @@ class ProjectSerializer(serializers.ModelSerializer):
     isdelete = serializers.CharField(max_length=10, default=True,
                                      allow_blank=True)
     request_header = serializers.CharField(max_length=100, default='')
+    login_way = serializers.CharField(max_length=100, default='')
 
     class Meta:
         model = Project
         fields = (
             'project_name', 'permanent_address', 'id', 'isdelete',
-            'request_header')
+            'request_header', 'login_way')
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -48,20 +49,27 @@ class CaseSerializer(serializers.ModelSerializer):
                                                 queryset=Project.objects.filter(
                                                     isdelete=True))
     request_type = serializers.CharField(max_length=20)
-    request_param = serializers.CharField(max_length=300)
+    request_param = serializers.CharField(max_length=300, allow_blank=True,
+                                          required=False)
     # request_header = serializers.CharField(max_length=100)
     isdelete = serializers.CharField(max_length=10, allow_blank=True,
                                      default=True)
     expected_result = serializers.CharField(max_length=300)
-    return_result = serializers.CharField(max_length=300, allow_blank=True,
+    return_result = serializers.CharField(allow_blank=True,
                                           required=False)
-    login_way = serializers.CharField(max_length=50)
+    # login_way = serializers.CharField(max_length=50)
     case_result = serializers.CharField(max_length=20, allow_blank=True,
                                         required=False)
+    url = serializers.CharField(max_length=100, default='')
+    invoking_login = serializers.CharField(max_length=10, default='',
+                                           allow_blank=True)
+    invoking_other_interface = serializers.CharField(max_length=100, default='',
+                                                     allow_blank=True)
 
     class Meta:
         model = Case
         fields = (
             'case_name', 'request_type', 'request_param',
-            'isdelete', 'expected_result', 'return_result', 'login_way',
-            'case_result', 'id', 'project_name')
+            'isdelete', 'expected_result', 'return_result',
+            'case_result', 'id', 'project_name', 'url', 'invoking_login',
+            'invoking_other_interface')

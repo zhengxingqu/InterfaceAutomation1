@@ -27,6 +27,8 @@ class Project(models.Model):
     isdelete = models.CharField(max_length=10, default=True, verbose_name='状态')
     request_header = models.CharField(max_length=100, default='',
                                       verbose_name='请求头')
+    login_way = models.CharField(max_length=100, default='',
+                                 verbose_name='登陆方式')
 
     def __unicode__(self):
         return self.project_name
@@ -42,18 +44,23 @@ class Case(models.Model):
     request_type = models.CharField(max_length=20, default='',
                                     verbose_name='接口请求类型')
     request_param = models.CharField(max_length=300, default='',
-                                     verbose_name='接口请求参数')
+                                     verbose_name='接口请求参数', blank=True)
     # request_header = models.CharField(max_length=100, default='',
     #                                   verbose_name='请求头')
     isdelete = models.CharField(max_length=10, default=True, verbose_name='状态')
     expected_result = models.CharField(max_length=300, default='',
                                        verbose_name='预期结果')
-    login_way = models.CharField(max_length=50, default='',
-                                 verbose_name='登陆方式')
-    return_result = models.CharField(max_length=300, default='',
+    # login_way = models.CharField(max_length=50, default='',
+    #                              verbose_name='登陆方式')
+    return_result = models.TextField(default='',
                                      verbose_name='接口运行返回结果')
     case_result = models.CharField(max_length=20, default='未开始',
                                    verbose_name='用例运行结果', )
+    url = models.CharField(max_length=100, default='', verbose_name='接口地址')
+    invoking_login = models.CharField(max_length=10, default='',
+                                      verbose_name='调用登陆接口')
+    invoking_other_interface = models.CharField(max_length=100, default='',
+                                                verbose_name='调用其他接口信息')
 
     def __unicode__(self):
         return self.case_name

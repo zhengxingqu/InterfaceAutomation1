@@ -17,7 +17,7 @@
                 </router-link>
               </el-menu-item>
               <el-menu-item index="1-4">
-                <router-link to="/user_list/" style="text-decoration: none;">
+                <router-link to="/user/" style="text-decoration: none;">
                   用户管理
                 </router-link>
               </el-menu-item>
@@ -53,17 +53,7 @@
             <i class="el-icon-setting" style="margin-right: 15px"></i>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>
-                <router-link to="/url_list/" style="text-decoration: none;">项目
-                </router-link>
-              </el-dropdown-item>
-              <el-dropdown-item>
-                <router-link to="/case_list/" style="text-decoration: none;">
-                  测试用例
-                </router-link>
-              </el-dropdown-item>
-              <el-dropdown-item>
-                <router-link to="/case_suite_list/"
-                             style="text-decoration: none;">用户管理
+                <router-link to="/login/" style="text-decoration: none;">退出
                 </router-link>
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -128,7 +118,9 @@
             </el-table-column>
             <el-table-column prop="request_type" label="请求类型" width="120">
             </el-table-column>
-            <el-table-column prop="request_param" label="请求类型" width="120">
+            <el-table-column prop="request_param" label="请求参数" width="120">
+            </el-table-column>
+            <el-table-column prop="url" label="接口地址" width="120">
             </el-table-column>
             <el-table-column prop="case_result" label="运行结果" width="120">
             </el-table-column>
@@ -225,7 +217,7 @@
         console.log(this.pageSize);  //每页下拉显示数据
         let t = (size / 10);
         if (t <= 1) {
-          this.$axios.get('project_list/').then((res) => {
+          this.$axios.get('case_list/').then((res) => {
             this.sites = res.data.results;
           })
 
@@ -236,53 +228,53 @@
         this.currentPage = currentPage;
         console.log(this.currentPage); //点击第几页
         if (this.pageSize === 10 && currentPage <= 10) {
-          this.$axios.get('project_list/').then((res) => {
+          this.$axios.get('case_list/').then((res) => {
             console.log(res.data.results);
             this.sites = res.data.results;
           })
         }
         if (this.pageSize === 10 && currentPage > 10) {
           let t = parseInt(currentPage / 10) + 1;
-          this.$axios.get('project_list/?page=' + t).then((res) => {
+          this.$axios.get('case_list/?page=' + t).then((res) => {
             console.log(res.data.results);
             this.sites = res.data.results;
           });
         }
         if (this.pageSize === 20 && currentPage <= 5) {
-          this.$axios.get('project_list/').then((res) => {
+          this.$axios.get('case_list/').then((res) => {
             console.log(res.data.results);
             this.sites = res.data.results;
           })
         }
         if (this.pageSize === 20 && currentPage > 5) {
           let t = parseInt(currentPage / 5) + 1;
-          this.$axios.get('project_list/?page=' + t).then((res) => {
+          this.$axios.get('case_list/?page=' + t).then((res) => {
             console.log(res.data.results);
             this.sites = res.data.results;
           });
         }
         if (this.pageSize === 50 && currentPage <= 2) {
-          this.$axios.get('project_list/').then((res) => {
+          this.$axios.get('case_list/').then((res) => {
             console.log(res.data.results);
             this.sites = res.data.results;
           })
         }
         if (this.pageSize === 50 && currentPage > 2) {
           let t = parseInt(currentPage / 2) + 1;
-          this.$axios.get('project_list/?page=' + t).then((res) => {
+          this.$axios.get('case_list/?page=' + t).then((res) => {
             console.log(res.data.results);
             this.sites = res.data.results;
           });
         }
         if (this.pageSize === 100 && currentPage <= 1) {
-          this.$axios.get('project_list/').then((res) => {
+          this.$axios.get('case_list/').then((res) => {
             console.log(res.data.results);
             this.sites = res.data.results;
           })
         }
         if (this.pageSize === 100 && currentPage > 1) {
           let t = parseInt(currentPage / 2) + 1;
-          this.$axios.get('project_list/?page=' + t).then((res) => {
+          this.$axios.get('case_list/?page=' + t).then((res) => {
             console.log(res.data.results);
             this.sites = res.data.results;
           });
@@ -327,9 +319,15 @@
           this.getcase()
 
         }).catch((error) => {
-          if (error.status !== '') {
-            this.run_status = false
-          }
+
+          if (error.response.status === 404){
+              this.$message({
+            type: 'warning',
+            message: '用例已被删除'
+
+          });
+            this.getcase();
+            }
           console.log(error)
         })
       },
@@ -359,6 +357,20 @@
 
 
           }).catch((error) => {
+            if (error.response.status === 417) {
+              this.$message({
+                type: 'warning',
+                message: '该用例已被使用'
+
+              });
+            }
+            if (error.response.status === 404) {
+              this.$message({
+                type: 'warning',
+                message: error.response.data.detail
+              });
+              this.getcase()
+            }
             console.log(error)
           })
 

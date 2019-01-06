@@ -1,9 +1,10 @@
 <template>
   <div>
     <label for="password" style="padding-left: 450px">新密码:</label>
-    <el-input v-model="password" style="width: 300px;"></el-input>
+    <el-input v-model="password" type='password' style="width: 300px;"></el-input>
     <br>
-    <label for="confirmPwd" style="padding-left: 440px">确认密码</label>
+    <br>
+    <label for="confirmPwd" type='password' style="padding-left: 440px">确认密码</label>
     <el-input v-model="confirmPwd" style="width: 300px;"></el-input>
     <br>
     <br>
@@ -29,9 +30,9 @@
       reset: function () {
         var id = this.$route.params.id;
         this.ids = id;
-          this.$axios.put("reset_pwd/" + id, {password: this.password, user_id: this.ids}).then((res) => {
+          this.$axios.put("reset_pwd/" + id, {password: this.password, id: this.ids}).then((res) => {
             console.log(res);
-            this.$router.push('/user_list/');
+            this.$router.push('/user/');
           }).catch((err) => {
             console.log(err)
           })

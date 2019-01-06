@@ -16,7 +16,7 @@
                 </router-link>
               </el-dropdown-item>
               <el-dropdown-item>
-                <router-link to="/user_list/"
+                <router-link to="/user/"
                              style="text-decoration: none;">测试套件
                 </router-link>
               </el-dropdown-item>
@@ -94,14 +94,14 @@
             <span v-if="error_message.request_param !== ''"
                   style="color: red; padding-left: 550px">{{error_message.request_param}}</span>
             <!--<el-form-item prop="request_header">-->
-              <!--<label for="request_header"-->
-                     <!--style="padding-left: 430px">请求头：</label>-->
-              <!--<el-input name="request_header"-->
-                        <!--v-model="ruleForm.request_header"-->
-                        <!--style="width: 300px"></el-input>-->
+            <!--<label for="request_header"-->
+            <!--style="padding-left: 430px">请求头：</label>-->
+            <!--<el-input name="request_header"-->
+            <!--v-model="ruleForm.request_header"-->
+            <!--style="width: 300px"></el-input>-->
             <!--</el-form-item>-->
             <!--<span v-if="error_message.request_header !== ''"-->
-                  <!--style="color: red; padding-left: 550px">{{error_message.request_header}}</span>-->
+            <!--style="color: red; padding-left: 550px">{{error_message.request_header}}</span>-->
             <el-form-item prop="expected_result">
               <label for="expected_result"
                      style="padding-left: 430px">预期结果：</label>
@@ -111,16 +111,42 @@
             </el-form-item>
             <span v-if="error_message.expected_result !== ''"
                   style="color: red; padding-left: 550px">{{error_message.expected_result}}</span>
-            <el-form-item prop="login_way">
-              <label for="login_way"
-                     style="padding-left: 430px">登陆方式：</label>
-              <el-input name="login_way"
-                        v-model="ruleForm.login_way"
+            <!--<el-form-item prop="login_way">-->
+            <!--<label for="login_way"-->
+            <!--style="padding-left: 430px">登陆方式：</label>-->
+            <!--<el-input name="login_way"-->
+            <!--v-model="ruleForm.login_way"-->
+            <!--style="width: 300px"></el-input>-->
+            <!--</el-form-item>-->
+            <!--<span v-if="error_message.login_way !== ''"-->
+            <!--style="color: red; padding-left: 550px">{{error_message.login_way}}</span>-->
+            <el-form-item prop="url">
+              <label for="url"
+                     style="padding-left: 430px">接口地址：</label>
+              <el-input name="url"
+                        v-model="ruleForm.url"
                         style="width: 300px"></el-input>
             </el-form-item>
-            <span v-if="error_message.login_way !== ''"
-                  style="color: red; padding-left: 550px">{{error_message.login_way}}</span>
-
+            <span v-if="error_message.url !== ''"
+                  style="color: red; padding-left: 550px">{{error_message.url}}</span>
+            <el-form-item prop="invoking_login">
+              <label for="invoking_login"
+                     style="padding-left: 430px">是否调用登陆接口：</label>
+              <el-input name="invoking_login"
+                        v-model="ruleForm.invoking_login"
+                        style="width: 300px"></el-input>
+            </el-form-item>
+            <span v-if="error_message.invoking_login !== ''"
+                  style="color: red; padding-left: 550px">{{error_message.invoking_login}}</span>
+            <el-form-item prop="invoking_other_interface">
+              <label for="invoking_other_interface"
+                     style="padding-left: 430px">调用其他接口返回数据：</label>
+              <el-input name="invoking_login"
+                        v-model="ruleForm.invoking_other_interface"
+                        style="width: 300px"></el-input>
+            </el-form-item>
+            <span v-if="error_message.invoking_other_interface !== ''"
+                  style="color: red; padding-left: 550px">{{error_message.invoking_other_interface}}</span>
             <br>
             <el-button type="button" value="保存" @click="addcase('ruleForm')"
                        size="middle"
@@ -148,8 +174,11 @@
           request_param: '',
           // request_header: '',
           expected_result: '',
-          login_way: '',
+          // login_way: '',
           project_name: '',
+          url: '',
+          invoking_login: '',
+          invoking_other_interface: '',
         },
         rules: {
           case_name: [
@@ -158,21 +187,24 @@
           request_type: [
             {required: true, message: '请输入请求类型', trigger: 'blur'}
           ],
-          request_param: [
-            {required: true, message: '请输入请求参数', trigger: 'blur'}
-          ],
+          // request_param: [
+          //   {required: true, message: '请输入请求参数', trigger: 'blur'}
+          // ],
           // request_header: [
           //   {required: true, message: '请输入请求头', trigger: 'blur'}
           // ],
           expected_result: [
             {required: true, message: '请输入预期结果', trigger: 'blur'}
           ],
-          login_way: [
-            {required: true, message: '请输入登陆方式', trigger: 'blur'}
-          ],
+          // login_way: [
+          //   {required: true, message: '请输入登陆方式', trigger: 'blur'}
+          // ],
           project_name: [
             {required: true, message: '请输入项目名称', trigger: 'blur'}
-          ]
+          ],
+          url: [
+            {required: true, message: '请输入接口地址', trigger: 'blur'}
+          ],
         },
         error_message: [],
         type_list: ['get', 'post', 'delete', 'put'],
@@ -207,19 +239,19 @@
         })
       },
       getprojects: function () {
-          this.$axios.get('project_list/?page=' + this.currentPage).then((res) => {
-            console.log(res.data.results);
-            this.sites = res.data.results
-          })
-        }
-      },
-      success_message() {
-        this.$notify({
-          title: '成功',
-          message: '新增域名成功',
-          type: 'success'
-        });
-      },
+        this.$axios.get('project_list/?page=' + this.currentPage).then((res) => {
+          console.log(res.data.results);
+          this.sites = res.data.results
+        })
+      }
+    },
+    success_message() {
+      this.$notify({
+        title: '成功',
+        message: '新增域名成功',
+        type: 'success'
+      });
+    },
   }
 </script>
 

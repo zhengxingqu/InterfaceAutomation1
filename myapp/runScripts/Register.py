@@ -23,9 +23,14 @@ class Register(generics.ListCreateAPIView):
         data = request.data
         try:
             # 创建用户信息
+
+            print(type(data['username']), type(data['sex']),
+                  type(data['iphone']))
+
             User.objects.create_user(username=data['username'],
                                      password=data['password'],
                                      sex=data['sex'], iphone=data['iphone'],
+                                     head_portrait=data['head_portrait']
                                      )
             return Response(data, status=status.HTTP_201_CREATED)
         except Exception as e:
