@@ -91,6 +91,9 @@
                        @click="removeBatch"
                        :loading=delete_status>批量删除
             </el-button>
+            <el-button class="small" size="small" @click="runCases()"
+                       :loading=runs_status>批量运行
+            </el-button>
             <!--<el-dialog-->
             <!--title="提示"-->
             <!--:visible.sync="dialogVisible"-->
@@ -201,12 +204,12 @@
         case_list: [],
         delete_status: false,
         run_status: false,
+        runs_status: false,
 
 
       };
 
     },
-
 
     mounted: function () {
       this.getcase();
@@ -224,6 +227,27 @@
         }
 
       },
+      runCases() {
+        this.runs_status = true;
+        this.multipleSelection.forEach(i => {
+          this.case_list.push(i.id)
+        });
+        this.$axios.post('run_cases/', {"ids": this.case_list}).then((res) => {
+          if (res.data.results !== '') {
+            this.runs_status = false
+          }
+          console.log(res);
+          this.getcase();
+          this.case_list.splice(0, this.case_list.length);
+
+        }).catch((err) => {
+          if (err.status !== '') {
+            this.runs_status = false
+          }
+          console.log(err)
+        })
+      },
+
       handleCurrentChange: function (currentPage) {
         this.currentPage = currentPage;
         console.log(this.currentPage); //点击第几页
@@ -405,7 +429,7 @@
               type: 'success',
               message: '删除成功!'
             });
-            this.list1.splice(0, this.case_list.length)
+            this.case_list.splice(0, this.case_list.length)
           }).catch((err) => {
             console.log(err)
           })
