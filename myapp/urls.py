@@ -4,7 +4,7 @@ from myapp.views import InterfaceProject, InterfaceCase, UpdateProject, \
     UpdateCase, DeleteProject, DeleteCase, DeleteProjects, DeleteCases, \
     SearchProject, SearchCase, UserList, SearchUser, UpdateUser, DeleteUser, \
     DeleteUsers, ResetPwd
-from .runScripts import Register, RunCase, RunCases
+from .runScripts import Register, RunCase, RunCases, TestCaseDoc
 from rest_framework_jwt.views import obtain_jwt_token
 
 urlpatterns = [
@@ -44,4 +44,5 @@ urlpatterns = [
         name='delete_users'),
     url(r'^reset_pwd/(?P<pk>\d+)$', ResetPwd.as_view(), name='reset_pwd'),
     url(r'^run_cases/$', RunCases.RunCases.as_view(), name='run_cases'),
+    url(r'^make_cases/$', TestCaseDoc.MakeCases.as_view(), name='make_cases'),
 ]

@@ -94,6 +94,9 @@
             <el-button class="small" size="small" @click="runCases()"
                        :loading=runs_status>批量运行
             </el-button>
+                        <el-button class="small" size="small" @click="makeCases()"
+                       :loading=runs_status>生成测试用例
+            </el-button>
             <!--<el-dialog-->
             <!--title="提示"-->
             <!--:visible.sync="dialogVisible"-->
@@ -233,6 +236,26 @@
           this.case_list.push(i.id)
         });
         this.$axios.post('run_cases/', {"ids": this.case_list}).then((res) => {
+          if (res.data.results !== '') {
+            this.runs_status = false
+          }
+          console.log(res);
+          this.getcase();
+          this.case_list.splice(0, this.case_list.length);
+
+        }).catch((err) => {
+          if (err.status !== '') {
+            this.runs_status = false
+          }
+          console.log(err)
+        })
+      },
+      makeCases() {
+        this.runs_status = true;
+        this.multipleSelection.forEach(i => {
+          this.case_list.push(i.id)
+        });
+        this.$axios.post('make_cases/', {"ids": this.case_list}).then((res) => {
           if (res.data.results !== '') {
             this.runs_status = false
           }

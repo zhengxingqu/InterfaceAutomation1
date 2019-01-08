@@ -89,7 +89,7 @@
                      style="padding-left: 430px">请求参数：</label>
               <el-input name="request_param"
                         v-model="ruleForm.request_param"
-                        style="width: 300px"></el-input>
+                        style="width: 300px" type="textarea"></el-input>
             </el-form-item>
             <span v-if="error_message.request_param !== ''"
                   style="color: red; padding-left: 550px">{{error_message.request_param}}</span>
