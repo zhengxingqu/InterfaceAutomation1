@@ -5,14 +5,14 @@ from rest_framework.views import APIView
 from ..models import Case, Project
 import logging
 from rest_framework.response import Response
-from datetime import datetime
 import time
 
 
 class MakeCases(APIView):
     def post(self, request):
         case_ids = request.data
-        global project_name, request_type, request_param, request_url, return_result, case_name
+        global project_name, request_type, request_param, request_url, \
+            return_result, case_name, expected_result
         global document
         document = Document()
         records = []
@@ -37,6 +37,8 @@ class MakeCases(APIView):
                                                             isdelete=True,
                                                             id=int(
                                                                 number_id)).project_name).permanent_address
+                expected_result = Case.objects.get(isdelete=True, id=int(
+                    number_id)).expected_result
                 request_url = permanent_address + url
                 if request_param == '':
                     request_param = '{}'
@@ -44,6 +46,7 @@ class MakeCases(APIView):
                 list_dict['request_url'] = request_url
                 list_dict['request_type'] = request_type
                 list_dict['request_param'] = request_param
+                list_dict['expected_result'] = expected_result
                 records.append(list_dict)
 
                 document.add_heading(u'接口测试用例', 0)
@@ -52,16 +55,19 @@ class MakeCases(APIView):
 
                 # document.add_picture('monty-truth.png', width=Inches(1.25))
 
-                table = document.add_table(rows=1, cols=3)
+                table = document.add_table(rows=1, cols=4)
                 hdr_cells = table.rows[0].cells
                 hdr_cells[0].text = '请求url'
                 hdr_cells[1].text = '请求方式'
                 hdr_cells[2].text = '提交参数'
+                hdr_cells[3].text = '预期结果'
                 # hdr_cells[3].text = '返回参数'
                 row_cells = table.add_row().cells
                 row_cells[0].text = list_dict['request_url']
                 row_cells[1].text = list_dict['request_type']
                 row_cells[2].text = list_dict['request_param']
+                row_cells[3].text = list_dict['expected_result']
+
                 # row_cells[3].text = result
 
                 document.add_page_break()
