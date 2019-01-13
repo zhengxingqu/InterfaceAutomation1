@@ -1,33 +1,43 @@
 # -*- coding:utf-8 -*-
 from rest_framework.views import APIView
-from ..models import Case, Project
+from ..models import Case, Project, Report, ReportDetail
 import logging
 import requests
 from rest_framework.response import Response
 import re
+import datetime
+from datetime import timedelta
 
 
 class RunCases(APIView):
     # 登陆接口返回数据
-    def login(self):
-        login_request_param = Case.objects.get(isdelete=True,
-                                               id=invoking_login).request_param
-        login_url = Case.objects.get(isdelete=True, id=invoking_login).url
-        login_permanent_address = Project.objects.get(isdelete=True,
-                                                      project_name=Case.objects.get(
-                                                          isdelete=True,
-                                                          id=invoking_login).project_name).permanent_address
-        login_request_url = login_permanent_address + login_url
-        login_request_header = Project.objects.get(isdelete=True,
-                                                   project_name=Case.objects.get(
-                                                       isdelete=True,
-                                                       id=invoking_login).project_name).request_header
-        # login_login_way = Project.objects.get(isdelete=True,
-        #                                       id=invoking_login).login_way
 
-        result = requests.post(login_request_url,
-                               json=eval(login_request_param),
-                               headers=eval(login_request_header), verify=False)
+    pass_number = 0
+    fail_number = 0
+
+    def login(self):
+        try:
+            login_request_param = Case.objects.get(isdelete=True,
+                                                   id=invoking_login).request_param
+            login_url = Case.objects.get(isdelete=True, id=invoking_login).url
+            login_permanent_address = Project.objects.get(isdelete=True,
+                                                          project_name=Case.objects.get(
+                                                              isdelete=True,
+                                                              id=invoking_login).project_name).permanent_address
+            login_request_url = login_permanent_address + login_url
+            login_request_header = Project.objects.get(isdelete=True,
+                                                       project_name=Case.objects.get(
+                                                           isdelete=True,
+                                                           id=invoking_login).project_name).request_header
+            # login_login_way = Project.objects.get(isdelete=True,
+            #                                       id=invoking_login).login_way
+
+            result = requests.post(login_request_url,
+                                   json=eval(login_request_param),
+                                   headers=eval(login_request_header),
+                                   verify=False)
+        except Exception as e:
+            return e
         # if login_login_way == 'cookies':
         #     return result.cookies
         # else:
@@ -36,53 +46,155 @@ class RunCases(APIView):
         return result
 
     # 不调用登陆、其他接口返回数据
+
     def get_no_login_case(self):
-        result = requests.get(request_url, params=eval(request_param),
-                              headers=eval(request_header), verify=False)
-        if expected_result.encode('utf-8') in result.content:
-            Case.objects.filter(id=int(number_id)).update(
-                case_result='成功')
-            Case.objects.filter(id=int(number_id)).update(
-                return_result=result.json())
-        else:
-            Case.objects.filter(id=int(number_id)).update(
-                case_result='失败')
+        try:
+            result = requests.get(request_url, params=eval(request_param),
+                                  headers=eval(request_header), verify=False)
+            if expected_result.encode('utf-8') in result.content:
+                Case.objects.filter(id=int(number_id)).update(
+                    case_result='成功')
+                Case.objects.filter(id=int(number_id)).update(
+                    return_result=result.json())
+                RunCases.pass_number += 1
+
+                try:
+                    ReportDetail.objects.create(case_name=case_name,
+                                                request_url=request_url,
+                                                result='PASS',
+                                                test_time=test_time,
+                                                request_type=request_type,
+                                                case_result=result.json(),
+                                                request_param=request_param)
+                except Exception as e:
+                    return e
+            else:
+                Case.objects.filter(id=int(number_id)).update(
+                    case_result='失败')
+                RunCases.fail_number += 1
+                try:
+                    ReportDetail.objects.create(case_name=case_name,
+                                                request_url=request_url,
+                                                result='FAIL',
+                                                test_time=test_time,
+                                                request_type=request_type,
+                                                case_result=result.json(),
+                                                request_param=request_param)
+                except Exception as e:
+                    return e
+        except Exception as e:
+            return e
 
     def post_no_login_case(self):
-        result = requests.post(request_url, json=eval(request_param),
-                               headers=eval(request_header), verify=False)
-        if expected_result.encode('utf-8') in result.content:
-            Case.objects.filter(id=int(number_id)).update(
-                case_result='成功')
-            Case.objects.filter(id=int(number_id)).update(
-                return_result=result.json())
-        else:
-            Case.objects.filter(id=int(number_id)).update(
-                case_result='失败')
+        try:
+            result = requests.post(request_url, json=eval(request_param),
+                                   headers=eval(request_header), verify=False)
+            if expected_result.encode('utf-8') in result.content:
+                Case.objects.filter(id=int(number_id)).update(
+                    case_result='成功')
+                Case.objects.filter(id=int(number_id)).update(
+                    return_result=result.json())
+                RunCases.pass_number += 1
+                try:
+                    ReportDetail.objects.create(case_name=case_name,
+                                                request_url=request_url,
+                                                result='PASS',
+                                                test_time=test_time,
+                                                request_type=request_type,
+                                                case_result=result.json(),
+                                                request_param=request_param)
+                except Exception as e:
+                    return e
+            else:
+                Case.objects.filter(id=int(number_id)).update(
+                    case_result='失败')
+                RunCases.fail_number += 1
+                try:
+                    ReportDetail.objects.create(case_name=case_name,
+                                                request_url=request_url,
+                                                result='FAIL',
+                                                test_time=test_time,
+                                                request_type=request_type,
+                                                case_result=result.json(),
+                                                request_param=request_param)
+                except Exception as e:
+                    return e
+        except Exception as e:
+            return e
 
     def put_no_login_case(self):
-        result = requests.put(request_url, json=eval(request_param),
-                              headers=eval(request_header), verify=False)
-        if expected_result.encode('utf-8') in result.content:
-            Case.objects.filter(id=int(number_id)).update(
-                case_result='成功')
-            Case.objects.filter(id=int(number_id)).update(
-                return_result=result.json())
-        else:
-            Case.objects.filter(id=int(number_id)).update(
-                case_result='失败')
+        try:
+            result = requests.put(request_url, json=eval(request_param),
+                                  headers=eval(request_header), verify=False)
+            if expected_result.encode('utf-8') in result.content:
+                Case.objects.filter(id=int(number_id)).update(
+                    case_result='成功')
+                Case.objects.filter(id=int(number_id)).update(
+                    return_result=result.json())
+                RunCases.pass_number += 1
+                try:
+                    ReportDetail.objects.create(case_name=case_name,
+                                                request_url=request_url,
+                                                result='PASS',
+                                                test_time=test_time,
+                                                request_type=request_type,
+                                                case_result=result.json(),
+                                                request_param=request_param)
+                except Exception as e:
+                    return e
+            else:
+                Case.objects.filter(id=int(number_id)).update(
+                    case_result='失败')
+                RunCases.fail_number += 1
+                try:
+                    ReportDetail.objects.create(case_name=case_name,
+                                                request_url=request_url,
+                                                result='FAIL',
+                                                test_time=test_time,
+                                                request_type=request_type,
+                                                case_result=result.json(),
+                                                request_param=request_param)
+                except Exception as e:
+                    return e
+        except Exception as e:
+            return e
 
     def delete_no_login_case(self):
-        result = requests.delete(request_url, json=eval(request_param),
-                                 headers=eval(request_header), verify=False)
-        if expected_result.encode('utf-8') in result.content:
-            Case.objects.filter(id=int(number_id)).update(
-                case_result='成功')
-            Case.objects.filter(id=int(number_id)).update(
-                return_result=result.json())
-        else:
-            Case.objects.filter(id=int(number_id)).update(
-                case_result='失败')
+        try:
+            result = requests.delete(request_url, json=eval(request_param),
+                                     headers=eval(request_header), verify=False)
+            if expected_result.encode('utf-8') in result.content:
+                Case.objects.filter(id=int(number_id)).update(
+                    case_result='成功')
+                Case.objects.filter(id=int(number_id)).update(
+                    return_result=result.json())
+                RunCases.pass_number += 1
+                try:
+                    ReportDetail.objects.create(case_name=case_name,
+                                                request_url=request_url,
+                                                result='PASS',
+                                                test_time=test_time,
+                                                request_type=request_type,
+                                                case_result=result.json(),
+                                                request_param=request_param)
+                except Exception as e:
+                    return e
+            else:
+                Case.objects.filter(id=int(number_id)).update(
+                    case_result='失败')
+                RunCases.fail_number += 1
+                try:
+                    ReportDetail.objects.create(case_name=case_name,
+                                                request_url=request_url,
+                                                result='FAIL',
+                                                test_time=test_time,
+                                                request_type=request_type,
+                                                case_result=result.json(),
+                                                request_param=request_param)
+                except Exception as e:
+                    return e
+        except Exception as e:
+            return e
 
     # 无需登陆、调用其他接口数据
     def get_nologin_invoking_interface(self):
@@ -114,10 +226,32 @@ class RunCases(APIView):
                             Case.objects.filter(
                                 id=int(number_id)).update(
                                 return_result=result.json())
+                            RunCases.pass_number += 1
+                            try:
+                                ReportDetail.objects.create(case_name=case_name,
+                                                            request_url=request_url,
+                                                            result='PASS',
+                                                            test_time=test_time,
+                                                            request_type=request_type,
+                                                            case_result=result.json(),
+                                                            request_param=request_param)
+                            except Exception as e:
+                                return e
                         else:
                             Case.objects.filter(
                                 id=int(number_id)).update(
                                 case_result='失败')
+                            RunCases.fail_number += 1
+                            try:
+                                ReportDetail.objects.create(case_name=case_name,
+                                                            request_url=request_url,
+                                                            result='FAIL',
+                                                            test_time=test_time,
+                                                            request_type=request_type,
+                                                            case_result=result.json(),
+                                                            request_param=request_param)
+                            except Exception as e:
+                                return e
             except Exception as e:
                 logging.debug(e)
 
@@ -150,10 +284,32 @@ class RunCases(APIView):
                             Case.objects.filter(
                                 id=int(number_id)).update(
                                 return_result=result.json())
+                            RunCases.pass_number += 1
+                            try:
+                                ReportDetail.objects.create(case_name=case_name,
+                                                            request_url=request_url,
+                                                            result='PASS',
+                                                            test_time=test_time,
+                                                            request_type=request_type,
+                                                            case_result=result.json(),
+                                                            request_param=request_param)
+                            except Exception as e:
+                                return e
                         else:
                             Case.objects.filter(
                                 id=int(number_id)).update(
                                 case_result='失败')
+                            RunCases.fail_number += 1
+                            try:
+                                ReportDetail.objects.create(case_name=case_name,
+                                                            request_url=request_url,
+                                                            result='FAIL',
+                                                            test_time=test_time,
+                                                            request_type=request_type,
+                                                            case_result=result.json(),
+                                                            request_param=request_param)
+                            except Exception as e:
+                                return e
             except Exception as e:
                 logging.debug(e)
 
@@ -186,10 +342,32 @@ class RunCases(APIView):
                             Case.objects.filter(
                                 id=int(number_id)).update(
                                 return_result=result.json())
+                            RunCases.pass_number += 1
+                            try:
+                                ReportDetail.objects.create(case_name=case_name,
+                                                            request_url=request_url,
+                                                            result='PASS',
+                                                            test_time=test_time,
+                                                            request_type=request_type,
+                                                            case_result=result.json(),
+                                                            request_param=request_param)
+                            except Exception as e:
+                                return e
                         else:
                             Case.objects.filter(
                                 id=int(number_id)).update(
                                 case_result='失败')
+                            RunCases.fail_number += 1
+                            try:
+                                ReportDetail.objects.create(case_name=case_name,
+                                                            request_url=request_url,
+                                                            result='FAIL',
+                                                            test_time=test_time,
+                                                            request_type=request_type,
+                                                            case_result=result.json(),
+                                                            request_param=request_param)
+                            except Exception as e:
+                                return e
             except Exception as e:
                 logging.debug(e)
 
@@ -233,22 +411,47 @@ class RunCases(APIView):
         if new_request_url == '':
             new_request_param = request_url
 
-        result = requests.delete(new_request_url,
-                                 json=eval(new_request_param),
-                                 headers=eval(request_header),
-                                 verify=False)
-        if expected_result.encode(
-                'utf-8') in result.content:
-            Case.objects.filter(
-                id=int(number_id)).update(
-                case_result='成功')
-            Case.objects.filter(
-                id=int(number_id)).update(
-                return_result=result.json())
-        else:
-            Case.objects.filter(
-                id=int(number_id)).update(
-                case_result='失败')
+        try:
+            result = requests.delete(new_request_url,
+                                     json=eval(new_request_param),
+                                     headers=eval(request_header),
+                                     verify=False)
+            if expected_result.encode(
+                    'utf-8') in result.content:
+                Case.objects.filter(
+                    id=int(number_id)).update(
+                    case_result='成功')
+                Case.objects.filter(
+                    id=int(number_id)).update(
+                    return_result=result.json())
+                RunCases.pass_number += 1
+                try:
+                    ReportDetail.objects.create(case_name=case_name,
+                                                request_url=request_url,
+                                                result='PASS',
+                                                test_time=test_time,
+                                                request_type=request_type,
+                                                case_result=result.json(),
+                                                request_param=request_param)
+                except Exception as e:
+                    return e
+            else:
+                Case.objects.filter(
+                    id=int(number_id)).update(
+                    case_result='失败')
+                RunCases.fail_number += 1
+                try:
+                    ReportDetail.objects.create(case_name=case_name,
+                                                request_url=request_url,
+                                                result='FAIL',
+                                                test_time=test_time,
+                                                request_type=request_type,
+                                                case_result=result.json(),
+                                                request_param=request_param)
+                except Exception as e:
+                    return e
+        except Exception as e:
+            return e
 
     # def get_login_invoking_interface(self):
     #     for interface_id in eval(invoking_other_interface):
@@ -290,119 +493,325 @@ class RunCases(APIView):
 
         if login_way == 'cookies':
             cookie = self.login().cookies
-            print(request_url, request_param, request_header)
-            result = requests.get(request_url, params=eval(request_param),
-                                  headers=eval(request_header), verify=False,
-                                  cookies=cookie)
-            print(result.json())
-            if expected_result.encode('utf-8') in result.content:
-                Case.objects.filter(id=int(number_id)).update(
-                    case_result='成功')
-                Case.objects.filter(id=int(number_id)).update(
-                    return_result=result.json())
-            else:
-                Case.objects.filter(id=int(number_id)).update(
-                    case_result='失败')
+            try:
+                result = requests.get(request_url, params=eval(request_param),
+                                      headers=eval(request_header),
+                                      verify=False,
+                                      cookies=cookie)
+                if expected_result.encode('utf-8') in result.content:
+                    Case.objects.filter(id=int(number_id)).update(
+                        case_result='成功')
+                    Case.objects.filter(id=int(number_id)).update(
+                        return_result=result.json())
+                    RunCases.pass_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='PASS',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        print(e)
+                else:
+                    Case.objects.filter(id=int(number_id)).update(
+                        case_result='失败')
+                    RunCases.fail_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='FAIL',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+            except Exception as e:
+                return e
         else:
             jwt = 'JWT ' + self.login().json()['token']
             request_header['Authorization'] = jwt
-            result = requests.get(request_url, params=eval(request_param),
-                                  headers=eval(request_header), verify=False)
-            if expected_result.encode('utf-8') in result.content:
-                Case.objects.filter(id=int(number_id)).update(
-                    case_result='成功')
-                Case.objects.filter(id=int(number_id)).update(
-                    return_result=result.json())
-            else:
-                Case.objects.filter(id=int(number_id)).update(
-                    case_result='失败')
+            try:
+                result = requests.get(request_url, params=eval(request_param),
+                                      headers=eval(request_header),
+                                      verify=False)
+                if expected_result.encode('utf-8') in result.content:
+                    Case.objects.filter(id=int(number_id)).update(
+                        case_result='成功')
+                    Case.objects.filter(id=int(number_id)).update(
+                        return_result=result.json())
+                    RunCases.pass_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='PASS',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+                else:
+                    Case.objects.filter(id=int(number_id)).update(
+                        case_result='失败')
+                    RunCases.fail_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='FAIL',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+            except Exception as e:
+                return e
 
     def post_login_no_invoking_interface(self):
 
         if login_way == 'cookies':
             cookie = self.login().cookies
-            result = requests.post(request_url, json=eval(request_param),
-                                   headers=eval(request_header), verify=False,
-                                   cookies=cookie)
-            if expected_result.encode('utf-8') in result.content:
-                Case.objects.filter(id=int(number_id)).update(
-                    case_result='成功')
-                Case.objects.filter(id=int(number_id)).update(
-                    return_result=result.json())
-            else:
-                Case.objects.filter(id=int(number_id)).update(
-                    case_result='失败')
+            try:
+                result = requests.post(request_url, json=eval(request_param),
+                                       headers=eval(request_header),
+                                       verify=False,
+                                       cookies=cookie)
+                if expected_result.encode('utf-8') in result.content:
+                    Case.objects.filter(id=int(number_id)).update(
+                        case_result='成功')
+                    Case.objects.filter(id=int(number_id)).update(
+                        return_result=result.json())
+                    RunCases.pass_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='PASS',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+                else:
+                    Case.objects.filter(id=int(number_id)).update(
+                        case_result='失败')
+                    RunCases.fail_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='FAIL',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+            except Exception as e:
+                return e
         else:
             jwt = 'JWT ' + self.login().json()['token']
             request_header['Authorization'] = jwt
-            result = requests.post(request_url, json=eval(request_param),
-                                   headers=eval(request_header), verify=False)
-            if expected_result.encode('utf-8') in result.content:
-                Case.objects.filter(id=int(number_id)).update(
-                    case_result='成功')
-                Case.objects.filter(id=int(number_id)).update(
-                    return_result=result.json())
-            else:
-                Case.objects.filter(id=int(number_id)).update(
-                    case_result='失败')
+            try:
+                result = requests.post(request_url, json=eval(request_param),
+                                       headers=eval(request_header),
+                                       verify=False)
+                if expected_result.encode('utf-8') in result.content:
+                    Case.objects.filter(id=int(number_id)).update(
+                        case_result='成功')
+                    Case.objects.filter(id=int(number_id)).update(
+                        return_result=result.json())
+                    RunCases.pass_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='PASS',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+                else:
+                    Case.objects.filter(id=int(number_id)).update(
+                        case_result='失败')
+                    RunCases.fail_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='FAIL',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+            except Exception as e:
+                return e
 
     def put_login_no_invoking_interface(self):
 
         if login_way == 'cookies':
             cookie = self.login().cookies
-            result = requests.put(request_url, json=eval(request_param),
-                                  headers=eval(request_header), verify=False,
-                                  cookies=cookie)
-            if expected_result.encode('utf-8') in result.content:
-                Case.objects.filter(id=int(number_id)).update(
-                    case_result='成功')
-                Case.objects.filter(id=int(number_id)).update(
-                    return_result=result.json())
-            else:
-                Case.objects.filter(id=int(number_id)).update(
-                    case_result='失败')
+            try:
+                result = requests.put(request_url, json=eval(request_param),
+                                      headers=eval(request_header),
+                                      verify=False,
+                                      cookies=cookie)
+                if expected_result.encode('utf-8') in result.content:
+                    Case.objects.filter(id=int(number_id)).update(
+                        case_result='成功')
+                    Case.objects.filter(id=int(number_id)).update(
+                        return_result=result.json())
+                    RunCases.pass_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='PASS',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+                else:
+                    Case.objects.filter(id=int(number_id)).update(
+                        case_result='失败')
+                    RunCases.fail_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='FAIL',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+            except Exception as e:
+                return e
         else:
             jwt = 'JWT ' + self.login().json()['token']
             request_header['Authorization'] = jwt
-            result = requests.put(request_url, json=eval(request_param),
-                                  headers=eval(request_header), verify=False)
-            if expected_result.encode('utf-8') in result.content:
-                Case.objects.filter(id=int(number_id)).update(
-                    case_result='成功')
-                Case.objects.filter(id=int(number_id)).update(
-                    return_result=result.json())
-            else:
-                Case.objects.filter(id=int(number_id)).update(
-                    case_result='失败')
+            try:
+                result = requests.put(request_url, json=eval(request_param),
+                                      headers=eval(request_header),
+                                      verify=False)
+                if expected_result.encode('utf-8') in result.content:
+                    Case.objects.filter(id=int(number_id)).update(
+                        case_result='成功')
+                    Case.objects.filter(id=int(number_id)).update(
+                        return_result=result.json())
+                    RunCases.pass_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='PASS',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+                else:
+                    Case.objects.filter(id=int(number_id)).update(
+                        case_result='失败')
+                    RunCases.fail_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='FAIL',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param).save()
+                    except Exception as e:
+                        return e
+            except Exception as e:
+                return e
 
     def delete_login_no_invoking_interface(self):
 
         if login_way == 'cookies':
             cookie = self.login().cookies
-            result = requests.delete(request_url, json=eval(request_param),
-                                     headers=eval(request_header), verify=False,
-                                     cookies=cookie)
-            if expected_result.encode('utf-8') in result.content:
-                Case.objects.filter(id=int(number_id)).update(
-                    case_result='成功')
-                Case.objects.filter(id=int(number_id)).update(
-                    return_result=result.json())
-            else:
-                Case.objects.filter(id=int(number_id)).update(
-                    case_result='失败')
+            try:
+                result = requests.delete(request_url, json=eval(request_param),
+                                         headers=eval(request_header),
+                                         verify=False,
+                                         cookies=cookie)
+                if expected_result.encode('utf-8') in result.content:
+                    Case.objects.filter(id=int(number_id)).update(
+                        case_result='成功')
+                    Case.objects.filter(id=int(number_id)).update(
+                        return_result=result.json())
+                    RunCases.pass_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='PASS',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+                else:
+                    Case.objects.filter(id=int(number_id)).update(
+                        case_result='失败')
+                    RunCases.fail_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='FAIL',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+            except Exception as e:
+                return e
         else:
             jwt = 'JWT ' + self.login().json()['token']
             request_header['Authorization'] = jwt
-            result = requests.delete(request_url, json=eval(request_param),
-                                     headers=eval(request_header), verify=False)
-            if expected_result.encode('utf-8') in result.content:
-                Case.objects.filter(id=int(number_id)).update(
-                    case_result='成功')
-                Case.objects.filter(id=int(number_id)).update(
-                    return_result=result.json())
-            else:
-                Case.objects.filter(id=int(number_id)).update(
-                    case_result='失败')
+            try:
+                result = requests.delete(request_url, json=eval(request_param),
+                                         headers=eval(request_header),
+                                         verify=False)
+                if expected_result.encode('utf-8') in result.content:
+                    Case.objects.filter(id=int(number_id)).update(
+                        case_result='成功')
+                    Case.objects.filter(id=int(number_id)).update(
+                        return_result=result.json())
+                    RunCases.pass_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='PASS',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+                else:
+                    Case.objects.filter(id=int(number_id)).update(
+                        case_result='失败')
+                    RunCases.fail_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='FAIL',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+            except Exception as e:
+                return e
 
     # 调用登陆及其他接口返回数据
     # 需要调用接口返回参数时，以【1】、【2】来对应需要调用的接口列表序号
@@ -450,43 +859,93 @@ class RunCases(APIView):
 
         if login_way == 'cookies':
             cookie = self.login().cookies
-            result = requests.get(new_request_url,
-                                  params=eval(new_request_param),
-                                  headers=eval(request_header),
-                                  verify=False,
-                                  cookies=cookie)
-            if expected_result.encode(
-                    'utf-8') in result.content:
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    case_result='成功')
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    return_result=result.json())
-            else:
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    case_result='失败')
+            try:
+                result = requests.get(new_request_url,
+                                      params=eval(new_request_param),
+                                      headers=eval(request_header),
+                                      verify=False,
+                                      cookies=cookie)
+                if expected_result.encode(
+                        'utf-8') in result.content:
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        case_result='成功')
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        return_result=result.json())
+                    RunCases.pass_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='PASS',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+                else:
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        case_result='失败')
+                    RunCases.fail_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='FAIL',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+            except Exception as e:
+                return e
 
         else:
             jwt = 'JWT ' + self.login().json()['token']
             request_header['Authorization'] = jwt
-            result = requests.put(new_request_url,
-                                  params=eval(new_request_param),
-                                  headers=eval(request_header),
-                                  verify=False)
-            if expected_result.encode(
-                    'utf-8') in result.content:
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    case_result='成功')
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    return_result=result.json())
-            else:
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    case_result='失败')
+            try:
+                result = requests.get(new_request_url,
+                                      params=eval(new_request_param),
+                                      headers=eval(request_header),
+                                      verify=False)
+                if expected_result.encode(
+                        'utf-8') in result.content:
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        case_result='成功')
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        return_result=result.json())
+                    RunCases.pass_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='PASS',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+                else:
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        case_result='失败')
+                    RunCases.fail_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='FAIL',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+            except Exception as e:
+                return e
 
     def put_login_invoking_interface(self):
 
@@ -533,43 +992,92 @@ class RunCases(APIView):
 
         if login_way == 'cookies':
             cookie = self.login().cookies
-            result = requests.put(new_request_url,
-                                  json=eval(new_request_param),
-                                  headers=eval(request_header),
-                                  verify=False,
-                                  cookies=cookie)
-            print(result.json())
-            if expected_result.encode(
-                    'utf-8') in result.content:
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    case_result='成功')
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    return_result=result.json())
-            else:
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    case_result='失败')
+            try:
+                result = requests.put(new_request_url,
+                                      json=eval(new_request_param),
+                                      headers=eval(request_header),
+                                      verify=False,
+                                      cookies=cookie)
+                if expected_result.encode(
+                        'utf-8') in result.content:
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        case_result='成功')
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        return_result=result.json())
+                    RunCases.pass_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='PASS',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+                else:
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        case_result='失败')
+                    RunCases.fail_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='FAIL',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+            except Exception as e:
+                return e
         else:
             jwt = 'JWT ' + self.login().json()['token']
             request_header['Authorization'] = jwt
-            result = requests.put(new_request_url,
-                                  json=eval(new_request_param),
-                                  headers=eval(request_header),
-                                  verify=False)
-            if expected_result.encode(
-                    'utf-8') in result.content:
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    case_result='成功')
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    return_result=result.json())
-            else:
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    case_result='失败')
+            try:
+                result = requests.put(new_request_url,
+                                      json=eval(new_request_param),
+                                      headers=eval(request_header),
+                                      verify=False)
+                if expected_result.encode(
+                        'utf-8') in result.content:
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        case_result='成功')
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        return_result=result.json())
+                    RunCases.pass_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='PASS',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+                else:
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        case_result='失败')
+                    RunCases.fail_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='FAIl',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+            except Exception as e:
+                return e
 
     def post_login_invoking_interface(self):
         new_request_param = ''
@@ -613,42 +1121,92 @@ class RunCases(APIView):
 
         if login_way == 'cookies':
             cookie = self.login().cookies
-            result = requests.post(new_request_url,
-                                   json=eval(new_request_param),
-                                   headers=eval(request_header),
-                                   verify=False,
-                                   cookies=cookie)
-            if expected_result.encode(
-                    'utf-8') in result.content:
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    case_result='成功')
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    return_result=result.json())
-            else:
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    case_result='失败')
+            try:
+                result = requests.post(new_request_url,
+                                       json=eval(new_request_param),
+                                       headers=eval(request_header),
+                                       verify=False,
+                                       cookies=cookie)
+                if expected_result.encode(
+                        'utf-8') in result.content:
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        case_result='成功')
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        return_result=result.json())
+                    RunCases.pass_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='PASS',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+                else:
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        case_result='失败')
+                    RunCases.fail_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='FAIL',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+            except Exception as e:
+                return e
         else:
             jwt = 'JWT ' + self.login().json()['token']
             request_header['Authorization'] = jwt
-            result = requests.post(new_request_url,
-                                   json=eval(new_request_param),
-                                   headers=eval(request_header),
-                                   verify=False)
-            if expected_result.encode(
-                    'utf-8') in result.content:
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    case_result='成功')
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    return_result=result.json())
-            else:
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    case_result='失败')
+            try:
+                result = requests.post(new_request_url,
+                                       json=eval(new_request_param),
+                                       headers=eval(request_header),
+                                       verify=False)
+                if expected_result.encode(
+                        'utf-8') in result.content:
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        case_result='成功')
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        return_result=result.json())
+                    RunCases.pass_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='PASS',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+                else:
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        case_result='失败')
+                    RunCases.fail_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='FAIL',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+            except Exception as e:
+                return e
 
     def delete_login_invoking_interface(self):
         new_request_param = ''
@@ -692,47 +1250,101 @@ class RunCases(APIView):
 
         if login_way == 'cookies':
             cookie = self.login().cookies
-            result = requests.delete(new_request_url,
-                                     json=eval(new_request_param),
-                                     headers=eval(request_header),
-                                     verify=False,
-                                     cookies=cookie)
-            if expected_result.encode(
-                    'utf-8') in result.content:
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    case_result='成功')
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    return_result=result.json())
-            else:
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    case_result='失败')
+            try:
+                result = requests.delete(new_request_url,
+                                         json=eval(new_request_param),
+                                         headers=eval(request_header),
+                                         verify=False,
+                                         cookies=cookie)
+                if expected_result.encode(
+                        'utf-8') in result.content:
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        case_result='成功')
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        return_result=result.json())
+                    RunCases.pass_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='PASS',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+                else:
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        case_result='失败')
+                    RunCases.fail_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='FAIL',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+            except Exception as e:
+                return e
         else:
             jwt = 'JWT ' + self.login().json()['token']
             request_header['Authorization'] = jwt
-            result = requests.delete(new_request_url,
-                                     json=eval(new_request_param),
-                                     headers=eval(request_header),
-                                     verify=False)
-            if expected_result.encode(
-                    'utf-8') in result.content:
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    case_result='成功')
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    return_result=result.json())
-            else:
-                Case.objects.filter(
-                    id=int(number_id)).update(
-                    case_result='失败')
+            try:
+                result = requests.delete(new_request_url,
+                                         json=eval(new_request_param),
+                                         headers=eval(request_header),
+                                         verify=False)
+                if expected_result.encode(
+                        'utf-8') in result.content:
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        case_result='成功')
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        return_result=result.json())
+                    RunCases.pass_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='PASS',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+                else:
+                    Case.objects.filter(
+                        id=int(number_id)).update(
+                        case_result='失败')
+                    RunCases.fail_number += 1
+                    try:
+                        ReportDetail.objects.create(case_name=case_name,
+                                                    request_url=request_url,
+                                                    result='FAIL',
+                                                    test_time=test_time,
+                                                    request_type=request_type,
+                                                    case_result=result.json(),
+                                                    request_param=request_param)
+                    except Exception as e:
+                        return e
+            except Exception as e:
+                return e
 
     def post(self, request):
+
         global request_type, request_url, request_param, expected_result, \
-            invoking_login, request_header, login_way, invoking_other_interface, number_id
+            invoking_login, request_header, login_way, invoking_other_interface, number_id, case_name, test_time
         case_ids = request.data
+        test_time1 = (datetime.datetime.now() + datetime.timedelta(
+            hours=8))
+        test_time = datetime.datetime.strftime(test_time1, '%Y-%m-%d %H:%M:%S')
         try:
             for number_id in case_ids['ids']:
                 request_type = Case.objects.get(isdelete=True,
@@ -765,6 +1377,9 @@ class RunCases(APIView):
                 invoking_other_interface = Case.objects.get(isdelete=True,
                                                             id=int(
                                                                 number_id)).invoking_other_interface
+                case_name = Case.objects.get(isdelete=True,
+                                             id=int(
+                                                 number_id)).case_name
 
                 if request_param == '':
                     request_param = '{}'
@@ -828,5 +1443,12 @@ class RunCases(APIView):
         except Exception as e:
             logging.debug(e)
         # 不用登陆、不调用其他接口返回信息的情况下
-
+        # RunCases.pass_percent = RunCases.pass_number / (
+        #         RunCases.pass_number + RunCases.fail_number) * 100
+        # RunCases.fail_percent = 100 - RunCases.pass_percent
+        Report.objects.create(pass_number=RunCases.pass_number,
+                              fail_number=RunCases.fail_number,
+                              test_time=test_time)
+        RunCases.pass_number = 0
+        RunCases.fail_number = 0
         return Response('success')

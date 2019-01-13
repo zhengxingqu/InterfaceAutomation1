@@ -22,6 +22,9 @@
                 </router-link>
               </el-menu-item>
               <el-menu-item index="1-5">
+                <router-link to="/echarts/" style="text-decoration: none;">
+                  报告
+                </router-link>
               </el-menu-item>
               <el-menu-item index="1-6">
               </el-menu-item>
@@ -52,7 +55,7 @@
           <el-dropdown>
             <i class="el-icon-setting" style="margin-right: 15px"></i>
             <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item>
+              <el-dropdown-item>
                 <router-link to="/login/" style="text-decoration: none;">退出
                 </router-link>
               </el-dropdown-item>
@@ -112,7 +115,7 @@
             :header-cell-style="getRowClass">
             <el-table-column type="selection" width="55"
                              class="selection"></el-table-column>
-            <el-table-column prop="id" label="编号" width="140" fixed>
+            <el-table-column prop="id" label="编号" width="140" fixed sortable>
             </el-table-column>
             <el-table-column prop="username" label="姓名" width="120">
             </el-table-column>
@@ -386,7 +389,7 @@
           return ''
         }
       },
-      resetpwd(id){
+      resetpwd(id) {
         this.$router.push('/pwd_reset/' + id)
       }
 

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from .serializers import UserSerializer, ProjectSerializer, CaseSerializer
-from .models import User, Project, Case
+from .serializers import UserSerializer, ProjectSerializer, CaseSerializer, \
+    ReportSerializer, ReportDetailSerializer
+from .models import User, Project, Case, Report, ReportDetail
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
@@ -206,3 +207,47 @@ class ResetPwd(APIView):
         except Exception as e:
             logging.exception(e)
         return Response(data, status=status.HTTP_200_OK)
+
+
+class CaseReport(generics.ListAPIView):
+    serializer_class = ReportSerializer
+    queryset = Report.objects.order_by('-test_time')[0:1]
+
+
+# 根据用例运行时间搜索报告
+class SearchReport(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = ReportDetail.objects.all()
+    serializer_class = ReportDetailSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('test_time',)
+
+
+# 根据用例运行时间搜索pass、fail用例数据
+class SearchReports(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Report.objects.all()
+    serializer_class = ReportSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('test_time',)
+
+
+class GetReports(generics.ListAPIView):
+    queryset = Report.objects.order_by('-test_time')[0:10]
+    serializer_class = ReportSerializer
+
+
+class ReportDetails(generics.ListAPIView):
+    # def get(self, request):
+    # result = Report.objects.order_by('-test_time')[0:1].get().test_time
+    # results = ReportDetail.objects.filter(test_time=result)
+    # results_list = []
+    # result_dict = {}
+    # for item in results:
+    #     result_dict['case_name'] = item.case_name
+    #     result_dict['request_url'] = item.request_url
+    #     result_dict['result'] = item.result
+    #     results_list.append(result_dict)
+    # print(results_list)
+    # return Response(results_list)
+    result_param = Report.objects.order_by('-test_time')[0:1].get().test_time
+    queryset = ReportDetail.objects.filter(test_time=result_param)
+    serializer_class = ReportDetailSerializer

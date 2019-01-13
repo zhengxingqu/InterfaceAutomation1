@@ -3,7 +3,8 @@ from django.contrib import admin
 from myapp.views import InterfaceProject, InterfaceCase, UpdateProject, \
     UpdateCase, DeleteProject, DeleteCase, DeleteProjects, DeleteCases, \
     SearchProject, SearchCase, UserList, SearchUser, UpdateUser, DeleteUser, \
-    DeleteUsers, ResetPwd
+    DeleteUsers, ResetPwd, CaseReport, SearchReport, GetReports, ReportDetails, \
+    SearchReports
 from .runScripts import Register, RunCase, RunCases, TestCaseDoc
 from rest_framework_jwt.views import obtain_jwt_token
 
@@ -45,4 +46,13 @@ urlpatterns = [
     url(r'^reset_pwd/(?P<pk>\d+)$', ResetPwd.as_view(), name='reset_pwd'),
     url(r'^run_cases/$', RunCases.RunCases.as_view(), name='run_cases'),
     url(r'^make_cases/$', TestCaseDoc.MakeCases.as_view(), name='make_cases'),
+    url(r'^case_report/$', CaseReport.as_view(), name='case_report'),
+    url(r'^search_report/$', SearchReport.as_view({'get': 'list'}),
+        name='search_report'),
+    url(r'^get_detail_report/$', ReportDetails.as_view(),
+        name='get_detail_report'),
+    url(r'^get_report/$', GetReports.as_view(),
+        name='get_report'),
+    url(r'^search_reports/$', SearchReports.as_view({'get': 'list'}),
+        name='search_reports'),
 ]

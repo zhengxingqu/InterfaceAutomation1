@@ -18,6 +18,8 @@ import UserList from "./components/UserList";
 import CreateUser from "./components/CreateUser";
 import UpdateUser from "./components/UpdateUser";
 import ResetPwd from "./components/ResetPwd";
+import schart from "./components/schart";
+import echarts from 'echarts'
 
 Vue.use(ElementUI);
 Vue.use(VueRouter);
@@ -87,6 +89,11 @@ const router = new VueRouter({
     {
       path: "/pwd_reset/:id",
       component: ResetPwd,
+      meta: {requireAuth: true}
+    },
+    {
+      path: "/echarts",
+      component: schart,
       meta: {requireAuth: true}
     },
 

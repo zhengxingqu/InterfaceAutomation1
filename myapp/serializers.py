@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from rest_framework import serializers
-from .models import User, Project, Case
+from .models import User, Project, Case, Report, ReportDetail
 from rest_framework.validators import UniqueValidator
 
 
@@ -73,3 +73,15 @@ class CaseSerializer(serializers.ModelSerializer):
             'isdelete', 'expected_result', 'return_result',
             'case_result', 'id', 'project_name', 'url', 'invoking_login',
             'invoking_other_interface')
+
+
+class ReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Report
+        fields = '__all__'
+
+
+class ReportDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ReportDetail
+        fields = '__all__'

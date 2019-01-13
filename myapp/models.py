@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.contrib.auth.models import AbstractUser
 
 from django.db import models
+import datetime
 
 
 # Create your models here.
@@ -61,6 +62,38 @@ class Case(models.Model):
                                       verbose_name='调用登陆接口')
     invoking_other_interface = models.CharField(max_length=100, default='',
                                                 verbose_name='调用其他接口信息')
+
+    def __unicode__(self):
+        return self.case_name
+
+
+class Report(models.Model):
+    # pass_percent = models.FloatField(verbose_name='通过率')
+    # fail_percent = models.FloatField(verbose_name='失败率')
+    pass_number = models.IntegerField(verbose_name='通过个数', null=True)
+    fail_number = models.IntegerField(verbose_name='失败个数', null=True)
+
+    test_time = models.CharField(max_length=50)
+
+    # def __unicode__(self):
+    #     return self.case_name
+
+
+class ReportDetail(models.Model):
+    case_name = models.CharField(max_length=100, default='',
+                                 verbose_name='报告测试用例名称', null=True)
+    request_url = models.CharField(max_length=100, default='',
+                                   verbose_name='报告请求地址', null=True)
+    result = models.CharField(max_length=50, default='', verbose_name='用例执行状态',
+                              null=True)
+    test_time = models.CharField(verbose_name='用例执行时间', null=True,
+                                 max_length=50)
+    case_result = models.TextField(default='',
+                                   verbose_name='用例返回结果')
+    request_type = models.CharField(max_length=20, default='',
+                                    verbose_name='接口请求方式')
+    request_param = models.CharField(max_length=500, default='',
+                                     verbose_name='接口请求参数')
 
     def __unicode__(self):
         return self.case_name
