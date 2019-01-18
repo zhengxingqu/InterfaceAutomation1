@@ -10,8 +10,11 @@ from myapp.common import RestonMessage
 import logging
 from rest_framework import status
 from rest_framework import filters, viewsets, mixins
+import logging
+import traceback
 
-logger = logging.getLogger(__name__)
+logging.basicConfig(filename='all.txt', level=logging.INFO)
+
 
 
 # Create your views here.
@@ -63,9 +66,10 @@ class DeleteProject(generics.RetrieveDestroyAPIView):
                                 status=status.HTTP_417_EXPECTATION_FAILED)
             else:
                 Project.objects.filter(id=instance.id).update(isdelete=False)
-                logger.info('删除project对象')
+                logging.INFO(traceback.format_exc())
                 return Response(status=status.HTTP_204_NO_CONTENT)
         except Project.DoesNotExist:
+            logging.INFO(traceback.format_exc())
             return Response('被删除的对象不存在', status=status.HTTP_404_NOT_FOUND)
 
 
@@ -98,8 +102,9 @@ class DeleteCase(generics.RetrieveDestroyAPIView):
                 Case.objects.filter(id=instance.id).update(isdelete=False)
                 return Response(status=status.HTTP_204_NO_CONTENT)
 
-        except Exception as e:
-            return Response(logger.info('删除的对象不存在'))
+        except Exception:
+            logging.INFO(traceback.format_exc())
+            return Response('删除的对象不存在')
 
 
 class DeleteProjects(APIView):
@@ -114,7 +119,7 @@ class DeleteProjects(APIView):
             try:
                 Project.objects.filter(id=i).update(isdelete=False)
             except Exception:
-                logger.info('删除的对象不存在')
+                logging.INFO(traceback.format_exc())
         return Response(return_message)
 
 
@@ -130,7 +135,7 @@ class DeleteCases(APIView):
             try:
                 Case.objects.filter(id=i).update(isdelete=False)
             except Exception:
-                logger.info('删除的对象不存在')
+                logging.INFO(traceback.format_exc())
         return Response(return_message)
 
 
@@ -187,7 +192,7 @@ class DeleteUsers(APIView):
             try:
                 User.objects.filter(id=i).update(isdelete=False)
             except Exception:
-                logger.info('删除的对象不存在')
+                logging.INFO(traceback.format_exc())
         return Response(return_message)
 
 
@@ -204,8 +209,8 @@ class ResetPwd(APIView):
             t = User.objects.get(id=data['id'])
             t.set_password(data['password'])
             t.save()
-        except Exception as e:
-            logging.exception(e)
+        except Exception:
+            logging.INFO(traceback.format_exc())
         return Response(data, status=status.HTTP_200_OK)
 
 
@@ -230,11 +235,13 @@ class SearchReports(mixins.ListModelMixin, viewsets.GenericViewSet):
     search_fields = ('test_time',)
 
 
+# 获取10次最近的报告
 class GetReports(generics.ListAPIView):
     queryset = Report.objects.order_by('-test_time')[0:10]
     serializer_class = ReportSerializer
 
 
+# 获取报告的详细信息
 class ReportDetails(generics.ListAPIView):
     # def get(self, request):
     # result = Report.objects.order_by('-test_time')[0:1].get().test_time
