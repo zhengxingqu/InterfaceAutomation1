@@ -101,6 +101,23 @@ const router = new VueRouter({
 });
 
 
+axios.interceptors.response.use(
+  response => {
+    return response;
+  },
+  error => {
+    if (error.response) {
+      if (error.response.status == 401) {
+          router.push('/login');
+        Vue.prototype.$message({
+            type: 'info',
+            message: '未登陆'
+          });
+      }
+    }
+
+  }
+);
 /* eslint-disable no-new */
 new Vue({
   router,

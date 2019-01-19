@@ -61,7 +61,7 @@
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-          <span>郑兴趣</span>
+          <span>{{username}}</span>
         </el-header>
 
         <el-main>
@@ -196,6 +196,7 @@
         list1: [],
         delete_status: false,
         project_name: '',
+        username: localStorage.username
 
 
       };

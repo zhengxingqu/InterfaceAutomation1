@@ -159,9 +159,11 @@ REST_FRAMEWORK = {
     # 'EXCEPTION_HANDLER': 'utils.exceptions.custom_exception_handler',
 
 }
+from . import JwtResponse
 
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'InterfaceAutomation.JwtResponse.jwt_response_payload_handle'
 }
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/

@@ -7,6 +7,10 @@ from rest_framework.response import Response
 import re
 import datetime
 from datetime import timedelta
+import logging
+import traceback
+import threading
+logging.basicConfig(filename='runcases.txt', level=logging.INFO)
 
 
 class RunCases(APIView):
@@ -36,8 +40,8 @@ class RunCases(APIView):
                                    json=eval(login_request_param),
                                    headers=eval(login_request_header),
                                    verify=False)
-        except Exception as e:
-            return e
+        except Exception:
+            logging.INFO(traceback.format_exc())
         # if login_login_way == 'cookies':
         #     return result.cookies
         # else:
@@ -66,8 +70,8 @@ class RunCases(APIView):
                                                 request_type=request_type,
                                                 case_result=result.json(),
                                                 request_param=request_param)
-                except Exception as e:
-                    return e
+                except Exception:
+                    logging.INFO(traceback.format_exc())
             else:
                 Case.objects.filter(id=int(number_id)).update(
                     case_result='失败')
@@ -80,10 +84,10 @@ class RunCases(APIView):
                                                 request_type=request_type,
                                                 case_result=result.json(),
                                                 request_param=request_param)
-                except Exception as e:
-                    return e
-        except Exception as e:
-            return e
+                except Exception:
+                    logging.INFO(traceback.format_exc())
+        except Exception:
+            logging.INFO(traceback.format_exc())
 
     def post_no_login_case(self):
         try:
@@ -103,8 +107,8 @@ class RunCases(APIView):
                                                 request_type=request_type,
                                                 case_result=result.json(),
                                                 request_param=request_param)
-                except Exception as e:
-                    return e
+                except Exception:
+                    logging.INFO(traceback.format_exc())
             else:
                 Case.objects.filter(id=int(number_id)).update(
                     case_result='失败')
@@ -117,10 +121,10 @@ class RunCases(APIView):
                                                 request_type=request_type,
                                                 case_result=result.json(),
                                                 request_param=request_param)
-                except Exception as e:
-                    return e
-        except Exception as e:
-            return e
+                except Exception:
+                    logging.INFO(traceback.format_exc())
+        except Exception:
+            logging.INFO(traceback.format_exc())
 
     def put_no_login_case(self):
         try:
@@ -140,8 +144,8 @@ class RunCases(APIView):
                                                 request_type=request_type,
                                                 case_result=result.json(),
                                                 request_param=request_param)
-                except Exception as e:
-                    return e
+                except Exception:
+                    logging.INFO(traceback.format_exc())
             else:
                 Case.objects.filter(id=int(number_id)).update(
                     case_result='失败')
@@ -154,10 +158,10 @@ class RunCases(APIView):
                                                 request_type=request_type,
                                                 case_result=result.json(),
                                                 request_param=request_param)
-                except Exception as e:
-                    return e
-        except Exception as e:
-            return e
+                except Exception:
+                    logging.INFO(traceback.format_exc())
+        except Exception:
+            logging.INFO(traceback.format_exc())
 
     def delete_no_login_case(self):
         try:
@@ -177,8 +181,8 @@ class RunCases(APIView):
                                                 request_type=request_type,
                                                 case_result=result.json(),
                                                 request_param=request_param)
-                except Exception as e:
-                    return e
+                except Exception:
+                    logging.INFO(traceback.format_exc())
             else:
                 Case.objects.filter(id=int(number_id)).update(
                     case_result='失败')
@@ -191,10 +195,10 @@ class RunCases(APIView):
                                                 request_type=request_type,
                                                 case_result=result.json(),
                                                 request_param=request_param)
-                except Exception as e:
-                    return e
-        except Exception as e:
-            return e
+                except Exception:
+                    logging.INFO(traceback.format_exc())
+        except Exception:
+            logging.INFO(traceback.format_exc())
 
     # 无需登陆、调用其他接口数据
     def get_nologin_invoking_interface(self):
@@ -235,8 +239,8 @@ class RunCases(APIView):
                                                             request_type=request_type,
                                                             case_result=result.json(),
                                                             request_param=request_param)
-                            except Exception as e:
-                                return e
+                            except Exception:
+                                logging.INFO(traceback.format_exc())
                         else:
                             Case.objects.filter(
                                 id=int(number_id)).update(
@@ -250,10 +254,10 @@ class RunCases(APIView):
                                                             request_type=request_type,
                                                             case_result=result.json(),
                                                             request_param=request_param)
-                            except Exception as e:
-                                return e
-            except Exception as e:
-                logging.debug(e)
+                            except Exception:
+                                logging.INFO(traceback.format_exc())
+            except Exception:
+                logging.INFO(traceback.format_exc())
 
     def post_nologin_invoking_interface(self):
         for interface_id in eval(invoking_other_interface):
@@ -293,8 +297,8 @@ class RunCases(APIView):
                                                             request_type=request_type,
                                                             case_result=result.json(),
                                                             request_param=request_param)
-                            except Exception as e:
-                                return e
+                            except Exception:
+                                logging.INFO(traceback.format_exc())
                         else:
                             Case.objects.filter(
                                 id=int(number_id)).update(
@@ -308,10 +312,10 @@ class RunCases(APIView):
                                                             request_type=request_type,
                                                             case_result=result.json(),
                                                             request_param=request_param)
-                            except Exception as e:
-                                return e
-            except Exception as e:
-                logging.debug(e)
+                            except Exception:
+                                logging.INFO(traceback.format_exc())
+            except Exception:
+                logging.INFO(traceback.format_exc())
 
     def put_nologin_invoking_interface(self):
         for interface_id in eval(invoking_other_interface):
@@ -351,8 +355,8 @@ class RunCases(APIView):
                                                             request_type=request_type,
                                                             case_result=result.json(),
                                                             request_param=request_param)
-                            except Exception as e:
-                                return e
+                            except Exception:
+                                logging.INFO(traceback.format_exc())
                         else:
                             Case.objects.filter(
                                 id=int(number_id)).update(
@@ -366,8 +370,8 @@ class RunCases(APIView):
                                                             request_type=request_type,
                                                             case_result=result.json(),
                                                             request_param=request_param)
-                            except Exception as e:
-                                return e
+                            except Exception:
+                                logging.INFO(traceback.format_exc())
             except Exception as e:
                 logging.debug(e)
 
@@ -404,8 +408,8 @@ class RunCases(APIView):
                                                               return_id.group(
                                                                   2))
 
-            except Exception as e:
-                logging.debug(e)
+            except Exception:
+                logging.INFO(traceback.format_exc())
         if new_request_param == '':
             new_request_param = request_param
         if new_request_url == '':
@@ -433,8 +437,8 @@ class RunCases(APIView):
                                                 request_type=request_type,
                                                 case_result=result.json(),
                                                 request_param=request_param)
-                except Exception as e:
-                    return e
+                except Exception:
+                    logging.INFO(traceback.format_exc())
             else:
                 Case.objects.filter(
                     id=int(number_id)).update(
@@ -448,10 +452,10 @@ class RunCases(APIView):
                                                 request_type=request_type,
                                                 case_result=result.json(),
                                                 request_param=request_param)
-                except Exception as e:
-                    return e
-        except Exception as e:
-            return e
+                except Exception:
+                    logging.INFO(traceback.format_exc())
+        except Exception:
+            logging.INFO(traceback.format_exc())
 
     # def get_login_invoking_interface(self):
     #     for interface_id in eval(invoking_other_interface):
@@ -512,8 +516,8 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        print(e)
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
                 else:
                     Case.objects.filter(id=int(number_id)).update(
                         case_result='失败')
@@ -526,8 +530,8 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
             except Exception as e:
                 return e
         else:
@@ -551,8 +555,8 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
                 else:
                     Case.objects.filter(id=int(number_id)).update(
                         case_result='失败')
@@ -565,10 +569,10 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
-            except Exception as e:
-                return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
+            except Exception:
+                logging.INFO(traceback.format_exc())
 
     def post_login_no_invoking_interface(self):
 
@@ -593,8 +597,8 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
                 else:
                     Case.objects.filter(id=int(number_id)).update(
                         case_result='失败')
@@ -607,10 +611,10 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
-            except Exception as e:
-                return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
+            except Exception:
+                logging.INFO(traceback.format_exc())
         else:
             jwt = 'JWT ' + self.login().json()['token']
             request_header['Authorization'] = jwt
@@ -632,8 +636,8 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
                 else:
                     Case.objects.filter(id=int(number_id)).update(
                         case_result='失败')
@@ -646,10 +650,10 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
-            except Exception as e:
-                return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
+            except Exception:
+                logging.INFO(traceback.format_exc())
 
     def put_login_no_invoking_interface(self):
 
@@ -674,8 +678,8 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
                 else:
                     Case.objects.filter(id=int(number_id)).update(
                         case_result='失败')
@@ -688,10 +692,10 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
-            except Exception as e:
-                return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
+            except Exception:
+                logging.INFO(traceback.format_exc())
         else:
             jwt = 'JWT ' + self.login().json()['token']
             request_header['Authorization'] = jwt
@@ -713,8 +717,8 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
                 else:
                     Case.objects.filter(id=int(number_id)).update(
                         case_result='失败')
@@ -727,10 +731,10 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param).save()
-                    except Exception as e:
-                        return e
-            except Exception as e:
-                return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
+            except Exception:
+                logging.INFO(traceback.format_exc())
 
     def delete_login_no_invoking_interface(self):
 
@@ -755,8 +759,8 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
                 else:
                     Case.objects.filter(id=int(number_id)).update(
                         case_result='失败')
@@ -769,10 +773,10 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
-            except Exception as e:
-                return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
+            except Exception:
+                logging.INFO(traceback.format_exc())
         else:
             jwt = 'JWT ' + self.login().json()['token']
             request_header['Authorization'] = jwt
@@ -794,8 +798,8 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
                 else:
                     Case.objects.filter(id=int(number_id)).update(
                         case_result='失败')
@@ -808,10 +812,10 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
-            except Exception as e:
-                return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
+            except Exception:
+                logging.INFO(traceback.format_exc())
 
     # 调用登陆及其他接口返回数据
     # 需要调用接口返回参数时，以【1】、【2】来对应需要调用的接口列表序号
@@ -848,8 +852,8 @@ class RunCases(APIView):
                                                               return_id.group(
                                                                   2))
 
-            except Exception as e:
-                logging.debug(e)
+            except Exception:
+                logging.INFO(traceback.format_exc())
 
         if new_request_param == '':
             new_request_param = request_param
@@ -882,8 +886,8 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
                 else:
                     Case.objects.filter(
                         id=int(number_id)).update(
@@ -897,10 +901,10 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
-            except Exception as e:
-                return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
+            except Exception:
+                logging.INFO(traceback.format_exc())
 
         else:
             jwt = 'JWT ' + self.login().json()['token']
@@ -927,8 +931,8 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
                 else:
                     Case.objects.filter(
                         id=int(number_id)).update(
@@ -942,10 +946,10 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
-            except Exception as e:
-                return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
+            except Exception:
+                logging.INFO(traceback.format_exc())
 
     def put_login_invoking_interface(self):
 
@@ -982,8 +986,8 @@ class RunCases(APIView):
                                                               return_id.group(
                                                                   2))
 
-            except Exception as e:
-                logging.debug(e)
+            except Exception:
+                logging.INFO(traceback.format_exc())
 
         if new_request_param == '':
             new_request_param = request_param
@@ -1015,8 +1019,8 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
                 else:
                     Case.objects.filter(
                         id=int(number_id)).update(
@@ -1030,10 +1034,10 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
-            except Exception as e:
-                return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
+            except Exception:
+                logging.INFO(traceback.format_exc())
         else:
             jwt = 'JWT ' + self.login().json()['token']
             request_header['Authorization'] = jwt
@@ -1059,8 +1063,8 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
                 else:
                     Case.objects.filter(
                         id=int(number_id)).update(
@@ -1074,10 +1078,10 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
-            except Exception as e:
-                return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
+            except Exception:
+                logging.INFO(traceback.format_exc())
 
     def post_login_invoking_interface(self):
         new_request_param = ''
@@ -1112,8 +1116,8 @@ class RunCases(APIView):
                                                               return_id.group(
                                                                   2))
 
-            except Exception as e:
-                logging.debug(e)
+            except Exception:
+                logging.INFO(traceback.format_exc())
         if new_request_param == '':
             new_request_param = request_param
         if new_request_url == '':
@@ -1144,8 +1148,8 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
                 else:
                     Case.objects.filter(
                         id=int(number_id)).update(
@@ -1159,10 +1163,10 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
-            except Exception as e:
-                return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
+            except Exception:
+                logging.INFO(traceback.format_exc())
         else:
             jwt = 'JWT ' + self.login().json()['token']
             request_header['Authorization'] = jwt
@@ -1188,8 +1192,8 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
                 else:
                     Case.objects.filter(
                         id=int(number_id)).update(
@@ -1203,10 +1207,10 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
-            except Exception as e:
-                return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
+            except Exception:
+                logging.INFO(traceback.format_exc())
 
     def delete_login_invoking_interface(self):
         new_request_param = ''
@@ -1241,8 +1245,8 @@ class RunCases(APIView):
                                                               return_id.group(
                                                                   2))
 
-            except Exception as e:
-                logging.debug(e)
+            except Exception:
+                logging.INFO(traceback.format_exc())
         if new_request_param == '':
             new_request_param = request_param
         if new_request_url == '':
@@ -1273,8 +1277,8 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
                 else:
                     Case.objects.filter(
                         id=int(number_id)).update(
@@ -1288,10 +1292,10 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
-            except Exception as e:
-                return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
+            except Exception:
+                logging.INFO(traceback.format_exc())
         else:
             jwt = 'JWT ' + self.login().json()['token']
             request_header['Authorization'] = jwt
@@ -1317,8 +1321,8 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
                 else:
                     Case.objects.filter(
                         id=int(number_id)).update(
@@ -1332,15 +1336,15 @@ class RunCases(APIView):
                                                     request_type=request_type,
                                                     case_result=result.json(),
                                                     request_param=request_param)
-                    except Exception as e:
-                        return e
-            except Exception as e:
-                return e
+                    except Exception:
+                        logging.INFO(traceback.format_exc())
+            except Exception:
+                logging.INFO(traceback.format_exc())
 
     def post(self, request):
 
         global request_type, request_url, request_param, expected_result, \
-            invoking_login, request_header, login_way, invoking_other_interface, number_id, case_name, test_time
+            invoking_login, request_header, login_way, invoking_other_interface, number_id, case_name, test_time, numbers
         case_ids = request.data
         test_time1 = (datetime.datetime.now() + datetime.timedelta(
             hours=8))
@@ -1438,17 +1442,98 @@ class RunCases(APIView):
                 if invoking_login != '' and request_type == 'delete' and \
                         invoking_other_interface != '':
                     self.delete_login_invoking_interface()
+                # threads = []
+                # print('开始时间为' + datetime.datetime.now().strftime('%Y%m%d %H%M%S'))
+                # for i in numbers:
+                #     t = threading.Thread(target=self.select_run_method, args='')
+                #     threads.append(t)
+                #
+                # for i in numbers:
+                #     print(i)
+                #     threads[i].start()
+                #
+                # for i in numbers:
+                #     print(i)
+                #     threads[i].join()
+                #
+                # print('结束时间为' + datetime.datetime.now().strftime('%Y%m%d %H%M%S'))
 
+                # Report.objects.create(pass_number=RunCases.pass_number,
+                #                       fail_number=RunCases.fail_number,
+                #                       test_time=test_time)
+                # RunCases.pass_number = 0
+                # RunCases.fail_number = 0
 
-        except Exception as e:
-            logging.debug(e)
+        except Exception:
+            logging.INFO(traceback.format_exc())
         # 不用登陆、不调用其他接口返回信息的情况下
-        # RunCases.pass_percent = RunCases.pass_number / (
-        #         RunCases.pass_number + RunCases.fail_number) * 100
-        # RunCases.fail_percent = 100 - RunCases.pass_percent
+        RunCases.pass_percent = RunCases.pass_number / (
+                RunCases.pass_number + RunCases.fail_number) * 100
+        RunCases.fail_percent = 100 - RunCases.pass_percent
         Report.objects.create(pass_number=RunCases.pass_number,
                               fail_number=RunCases.fail_number,
                               test_time=test_time)
         RunCases.pass_number = 0
         RunCases.fail_number = 0
         return Response('success')
+
+    # def select_run_method(self):
+    #     if invoking_login == '' and request_type == 'get' and \
+    #             invoking_other_interface == '':
+    #         self.get_no_login_case()
+    #     if invoking_login == '' and request_type == 'post' and \
+    #             invoking_other_interface == '':
+    #         self.post_no_login_case()
+    #     if invoking_login == '' and request_type == 'put' and \
+    #             invoking_other_interface == '':
+    #         self.put_no_login_case()
+    #     if invoking_login == '' and request_type == 'delete' and \
+    #             invoking_other_interface == '':
+    #         self.delete_no_login_case()
+    #
+    #     # 不用登陆、调用其他接口返回信息的情况下
+    #     if invoking_login == '' and request_type == 'get' and \
+    #             invoking_other_interface != '':
+    #         self.get_nologin_invoking_interface()
+    #     if invoking_login == '' and request_type == 'post' and \
+    #             invoking_other_interface != '':
+    #         self.post_nologin_invoking_interface()
+    #     if invoking_login == '' and request_type == 'put' and \
+    #             invoking_other_interface != '':
+    #         self.put_nologin_invoking_interface()
+    #     if invoking_login == '' and request_type == 'delete' and \
+    #             invoking_other_interface != '':
+    #         self.delete_nologin_invoking_interface()
+    #
+    #     # 要登陆、不调用其他接口返回信息的情况下
+    #     if invoking_login != '' and request_type == 'get' and \
+    #             invoking_other_interface == '':
+    #         self.get_login_no_invoking_interface()
+    #     if invoking_login != '' and request_type == 'post' and \
+    #             invoking_other_interface == '':
+    #         self.post_login_no_invoking_interface()
+    #     if invoking_login != '' and request_type == 'put' and \
+    #             invoking_other_interface == '':
+    #         self.put_login_no_invoking_interface()
+    #     if invoking_login != '' and request_type == 'delete' and \
+    #             invoking_other_interface == '':
+    #         self.delete_login_no_invoking_interface()
+    #
+    #     # 要登陆、调用其他接口返回信息的情况下
+    #     if invoking_login != '' and request_type == 'get' and \
+    #             invoking_other_interface != '':
+    #         self.get_login_invoking_interface()
+    #     if invoking_login != '' and request_type == 'post' and \
+    #             invoking_other_interface != '':
+    #         self.post_login_invoking_interface()
+    #     if invoking_login != '' and request_type == 'put' and \
+    #             invoking_other_interface != '':
+    #         self.put_login_invoking_interface()
+    #     if invoking_login != '' and request_type == 'delete' and \
+    #             invoking_other_interface != '':
+    #         self.delete_login_invoking_interface()
+
+
+
+
+

@@ -5,6 +5,10 @@ import logging
 import requests
 from rest_framework.response import Response
 import re
+import logging
+import traceback
+
+logging.basicConfig(filename='runcase.txt', level=logging.INFO)
 
 
 class RunCase(APIView):
@@ -33,7 +37,6 @@ class RunCase(APIView):
         # else:
         #     jwt = 'JWT ' + result.json()['token']
         #     return jwt
-        print(result.cookies)
         return result
 
     # 不调用登陆、其他接口返回数据
@@ -156,8 +159,8 @@ class RunCase(APIView):
                             Case.objects.filter(
                                 id=int(number_id['suite_id'])).update(
                                 case_result='失败')
-            except Exception as e:
-                logging.debug(e)
+            except Exception:
+                logging.INFO(traceback.format_exc())
 
     def put_nologin_invoking_interface(self):
         for interface_id in eval(invoking_other_interface):
@@ -193,7 +196,7 @@ class RunCase(APIView):
                                 id=int(number_id['suite_id'])).update(
                                 case_result='失败')
             except Exception as e:
-                logging.debug(e)
+                logging.INFO(traceback.format_exc())
 
     def delete_nologin_invoking_interface(self):
         new_request_param = ''
@@ -228,8 +231,8 @@ class RunCase(APIView):
                                                               return_id.group(
                                                                   2))
 
-            except Exception as e:
-                logging.debug(e)
+            except Exception:
+                logging.INFO(traceback.format_exc())
         if new_request_param == '':
             new_request_param = request_param
         if new_request_url == '':
@@ -439,8 +442,8 @@ class RunCase(APIView):
                                                               return_id.group(
                                                                   2))
 
-            except Exception as e:
-                logging.debug(e)
+            except Exception:
+                logging.INFO(traceback.format_exc())
 
         if new_request_param == '':
             new_request_param = request_param
@@ -523,8 +526,8 @@ class RunCase(APIView):
                                                               return_id.group(
                                                                   2))
 
-            except Exception as e:
-                logging.debug(e)
+            except Exception:
+                logging.INFO(traceback.format_exc())
 
         if new_request_param == '':
             new_request_param = request_param
@@ -538,7 +541,6 @@ class RunCase(APIView):
                                   headers=eval(request_header),
                                   verify=False,
                                   cookies=cookie)
-            print(result.json())
             if expected_result.encode(
                     'utf-8') in result.content:
                 Case.objects.filter(
@@ -604,8 +606,8 @@ class RunCase(APIView):
                                                               return_id.group(
                                                                   2))
 
-            except Exception as e:
-                logging.debug(e)
+            except Exception:
+                logging.INFO(traceback.format_exc())
         if new_request_param == '':
             new_request_param = request_param
         if new_request_url == '':
@@ -683,8 +685,8 @@ class RunCase(APIView):
                                                               return_id.group(
                                                                   2))
 
-            except Exception as e:
-                logging.debug(e)
+            except Exception:
+                logging.INFO(traceback.format_exc())
         if new_request_param == '':
             new_request_param = request_param
         if new_request_url == '':
@@ -768,8 +770,8 @@ class RunCase(APIView):
 
             if request_param == '':
                 request_param = '{}'
-        except Exception as e:
-            logging.debug(e)
+        except Exception:
+            logging.INFO(traceback.format_exc())
         # 不用登陆、不调用其他接口返回信息的情况下
         if invoking_login == '' and request_type == 'get' and \
                 invoking_other_interface == '':

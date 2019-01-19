@@ -9,6 +9,7 @@
         <el-input type="password" placeholder="密码" v-model="ruleForm.password" style="width: 300px"
                   @keyup.enter.native="submitForm('ruleForm')"></el-input>
       </el-form-item>
+      <!--<el-checkbox v-model="checked">记住密码</el-checkbox>-->
       <div class="login-btn">
         <el-button type="primary" style="width: 300px" @click="submitForm('ruleForm')">登录</el-button>
       </div>
@@ -49,7 +50,7 @@
               localStorage.user_id = res.data.user_id;
               localStorage.username = res.data.username;
               this.$router.push('/project/');
-              this.getlist()
+              // this.getproject()
             }).catch((err) => {
               _this.state = true;
               console.log(err);
