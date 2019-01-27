@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from .serializers import UserSerializer, ProjectSerializer, CaseSerializer, \
-    ReportSerializer, ReportDetailSerializer
-from .models import User, Project, Case, Report, ReportDetail
+    ReportSerializer, ReportDetailSerializer, TimingTaskSerializer
+from .models import User, Project, Case, Report, ReportDetail, TimingTask
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
@@ -12,7 +12,7 @@ from rest_framework import filters, viewsets, mixins
 import logging
 import traceback
 
-logging.basicConfig(filename='all.txt', level=logging.INFO)
+logging.basicConfig(filename='all.log', level=logging.INFO)
 
 
 # Create your views here.
@@ -256,3 +256,68 @@ class ReportDetails(generics.ListAPIView):
     result_param = Report.objects.order_by('-test_time')[0:1].get().test_time
     queryset = ReportDetail.objects.filter(test_time=result_param)
     serializer_class = ReportDetailSerializer
+
+
+class TimingTasks(generics.ListCreateAPIView):
+    queryset = TimingTask.objects.filter(isdelete=True)
+    serializer_class = TimingTaskSerializer
+
+
+class SearchTask(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = TimingTask.objects.all()
+    serializer_class = TimingTaskSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('task_name',)
+
+
+class DeleteTask(generics.RetrieveDestroyAPIView):
+    queryset = TimingTask.objects.filter(isdelete=True)
+    serializer_class = TimingTaskSerializer
+
+    def perform_destroy(self, instance):
+        try:
+            TimingTask.objects.filter(id=instance.id).update(isdelete=False)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        except Exception:
+            logging.INFO(traceback.format_exc())
+            return Response('删除的对象不存在')
+
+
+class DeleteTasks(APIView):
+    queryset = TimingTask.objects.filter(isdelete=True)
+    serializer_class = TimingTaskSerializer
+
+    def put(self, request):
+        return_message = {'code': 200, 'message': '成功'}
+
+        data = request.data
+        for i in data["ids"]:
+            try:
+                TimingTask.objects.filter(id=i).update(isdelete=False)
+            except Exception:
+                logging.INFO(traceback.format_exc())
+        return Response(return_message)
+
+
+class UpdateTaskStatus(generics.RetrieveDestroyAPIView):
+    queryset = TimingTask.objects.filter(isdelete=True)
+    serializer_class = TimingTaskSerializer
+
+    def perform_destroy(self, instance):
+        if TimingTask.objects.get(id=instance.id).is_stop == u'正常':
+            try:
+                TimingTask.objects.filter(id=instance.id).update(is_stop=u'停用')
+                return Response(status=status.HTTP_204_NO_CONTENT)
+
+            except Exception:
+                logging.INFO(traceback.format_exc())
+                return Response(u'停用的对象不存在')
+        else:
+            try:
+                TimingTask.objects.filter(id=instance.id).update(is_stop=u'正常')
+                return Response(status=status.HTTP_204_NO_CONTENT)
+
+            except Exception:
+                logging.INFO(traceback.format_exc())
+                return Response(u'启用的对象不存在')

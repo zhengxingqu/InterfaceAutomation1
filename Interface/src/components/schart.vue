@@ -118,7 +118,7 @@
       },
       // 获取最近一次运行的用例
       get_time_report() {
-        this.$axios.get('get_detail_report/', {}).then((res) => {
+        this.$axios.get('get_detail_report/').then((res) => {
           console.log(res);
           this.select_time_list = res.data.results
 

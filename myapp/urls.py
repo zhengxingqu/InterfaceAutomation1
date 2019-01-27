@@ -4,7 +4,8 @@ from myapp.views import InterfaceProject, InterfaceCase, UpdateProject, \
     UpdateCase, DeleteProject, DeleteCase, DeleteProjects, DeleteCases, \
     SearchProject, SearchCase, UserList, SearchUser, UpdateUser, DeleteUser, \
     DeleteUsers, ResetPwd, CaseReport, SearchReport, GetReports, ReportDetails, \
-    SearchReports
+    SearchReports, SearchTask, TimingTasks, DeleteTask, DeleteTasks, \
+    UpdateTaskStatus
 from .runScripts import Register, RunCase, RunCases, TestCaseDoc
 from rest_framework_jwt.views import obtain_jwt_token
 
@@ -55,4 +56,12 @@ urlpatterns = [
         name='get_report'),
     url(r'^search_reports/$', SearchReports.as_view({'get': 'list'}),
         name='search_reports'),
+    url(r'^search_task/$', SearchTask.as_view({'get': 'list'}),
+        name='search_task'),
+    url(r'^add_task/$', TimingTasks.as_view(), name='add_task'),
+    url(r'^get_task/$', TimingTasks.as_view(), name='get_task'),
+    url(r'^delete_task/(?P<pk>\d+)$', DeleteTask.as_view(), name='delete_task'),
+    url(r'^delete_tasks/$', DeleteTasks.as_view(), name='delete_tasks'),
+    url(r'^stop_task/(?P<pk>\d+)$', UpdateTaskStatus.as_view(),
+        name='stop_task'),
 ]

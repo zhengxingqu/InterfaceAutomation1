@@ -6,11 +6,10 @@ import requests
 from rest_framework.response import Response
 import re
 import datetime
-from datetime import timedelta
 import logging
 import traceback
-import threading
-logging.basicConfig(filename='runcases.txt', level=logging.INFO)
+
+logging.basicConfig(filename='runcases.log', level=logging.INFO)
 
 
 class RunCases(APIView):
@@ -1532,8 +1531,3 @@ class RunCases(APIView):
     #     if invoking_login != '' and request_type == 'delete' and \
     #             invoking_other_interface != '':
     #         self.delete_login_invoking_interface()
-
-
-
-
-

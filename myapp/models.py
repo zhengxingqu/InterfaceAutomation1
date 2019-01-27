@@ -97,3 +97,16 @@ class ReportDetail(models.Model):
 
     def __unicode__(self):
         return self.case_name
+
+
+class TimingTask(models.Model):
+    task_name = models.CharField(max_length=100, default='',
+                                 verbose_name='定时任务名称', blank=False)
+    time = models.CharField(max_length=50, verbose_name='定时任务执行时间', blank=False)
+    isdelete = models.CharField(max_length=10, default=True,
+                                verbose_name='删除状态', blank=True)
+    is_stop = models.CharField(max_length=10, default=True, verbose_name='停用状态',
+                               blank=False)
+
+    def __unicode__(self):
+        return self.task_name

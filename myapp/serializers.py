@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from rest_framework import serializers
-from .models import User, Project, Case, Report, ReportDetail
+from .models import User, Project, Case, Report, ReportDetail, TimingTask
 from rest_framework.validators import UniqueValidator
 
 
@@ -85,3 +85,13 @@ class ReportDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReportDetail
         fields = '__all__'
+
+
+class TimingTaskSerializer(serializers.ModelSerializer):
+    task_name = serializers.CharField(max_length=100)
+    time = serializers.CharField(max_length=100)
+    is_stop = serializers.CharField(max_length=100)
+
+    class Meta:
+        model = TimingTask
+        fields = ('task_name', 'time', 'is_stop', 'id')

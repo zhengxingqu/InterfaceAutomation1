@@ -20,6 +20,7 @@ import UpdateUser from "./components/UpdateUser";
 import ResetPwd from "./components/ResetPwd";
 import schart from "./components/schart";
 import echarts from 'echarts'
+import TimeingTask from "./components/TimeingTask";
 
 Vue.use(ElementUI);
 Vue.use(VueRouter);
@@ -96,7 +97,11 @@ const router = new VueRouter({
       component: schart,
       meta: {requireAuth: true}
     },
-
+       {
+      path: "/timing_task",
+      component: TimeingTask,
+      meta: {requireAuth: true}
+    },
   ]
 });
 

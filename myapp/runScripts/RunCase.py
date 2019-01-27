@@ -8,7 +8,7 @@ import re
 import logging
 import traceback
 
-logging.basicConfig(filename='runcase.txt', level=logging.INFO)
+logging.basicConfig(filename='runcase.log', level=logging.INFO)
 
 
 class RunCase(APIView):

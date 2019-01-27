@@ -13,10 +13,12 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import datetime
+import sys
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+# sys.path.insert(0, os.path.join(BASE_DIR, 'myapp'))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
@@ -39,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'myapp',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -137,13 +140,12 @@ CORS_ALLOW_HEADERS = (
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
-
 USE_I18N = True
 
 USE_L10N = True
 
 USE_TZ = False
+TIME_ZONE = 'Asia/Shanghai'
 
 REST_FRAMEWORK = {
     'PAGE_SIZE': 100,  # 每页数目,
@@ -159,7 +161,6 @@ REST_FRAMEWORK = {
     # 'EXCEPTION_HANDLER': 'utils.exceptions.custom_exception_handler',
 
 }
-from . import JwtResponse
 
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
@@ -171,3 +172,7 @@ JWT_AUTH = {
 STATIC_URL = '/static/'
 AUTH_USER_MODEL = "myapp.User"
 DATETIME_FORMAT = 'Y-m-d H:i:s'
+
+CRONJOBS = [
+    ('33 15 * * *', 'InterfaceAutomation.RunTimingTask.test', '>>~/test.log')
+]

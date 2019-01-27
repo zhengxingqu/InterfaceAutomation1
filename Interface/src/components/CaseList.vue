@@ -27,6 +27,9 @@
                 </router-link>
               </el-menu-item>
               <el-menu-item index="1-6">
+                <router-link to="/timing_task/" style="text-decoration: none;">
+                  定时任务
+                </router-link>
               </el-menu-item>
               <el-menu-item index="1-7">
               </el-menu-item>
@@ -100,6 +103,15 @@
                         <el-button class="small" size="small" @click="makeCases()"
                        :loading=runs_status>生成测试用例
             </el-button>
+            <!--<el-button size="small" @click="dialogTableVisible = true">定时任务</el-button>-->
+
+<!--<el-dialog title="收货地址" :visible.sync="dialogTableVisible">-->
+  <!--<el-table :data="gridData">-->
+    <!--<el-table-column property="date" label="日期" width="150"></el-table-column>-->
+    <!--<el-table-column property="name" label="姓名" width="200"></el-table-column>-->
+    <!--<el-table-column property="address" label="地址"></el-table-column>-->
+  <!--</el-table>-->
+<!--</el-dialog>-->
             <!--<el-dialog-->
             <!--title="提示"-->
             <!--:visible.sync="dialogVisible"-->

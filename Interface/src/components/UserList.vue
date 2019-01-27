@@ -27,6 +27,9 @@
                 </router-link>
               </el-menu-item>
               <el-menu-item index="1-6">
+                <router-link to="/timing_task/" style="text-decoration: none;">
+                  定时任务
+                </router-link>
               </el-menu-item>
               <el-menu-item index="1-7">
               </el-menu-item>

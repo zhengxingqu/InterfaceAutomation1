@@ -50,7 +50,7 @@
               localStorage.user_id = res.data.user_id;
               localStorage.username = res.data.username;
               this.$router.push('/project/');
-              // this.getproject()
+              window.location.reload();
             }).catch((err) => {
               _this.state = true;
               console.log(err);
