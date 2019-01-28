@@ -321,3 +321,46 @@ class UpdateTaskStatus(generics.RetrieveDestroyAPIView):
             except Exception:
                 logging.INFO(traceback.format_exc())
                 return Response(u'启用的对象不存在')
+
+
+class CopyCase(APIView):
+    def post(self, request):
+        i = 0
+        data = request.data
+        case_name = Case.objects.get(isdelete=True,
+                                     id=data['case_id']).case_name + str(i)
+        request_type = Case.objects.get(isdelete=True,
+                                        id=data['case_id']).request_type
+        request_param = Case.objects.get(isdelete=True,
+                                         id=data['case_id']).request_param
+        url = Case.objects.get(isdelete=True, id=data['case_id']).url
+        project_name = Case.objects.get(isdelete=True,
+                                        id=data['case_id']).project_name
+        expected_result = Case.objects.get(isdelete=True,
+                                           id=data['case_id']).expected_result
+        return_result = Case.objects.get(isdelete=True,
+                                         id=data['case_id']).return_result
+        case_result = Case.objects.get(isdelete=True,
+                                       id=data['case_id']).case_result
+        invoking_login = Case.objects.get(isdelete=True,
+                                          id=data['case_id']).invoking_login
+        invoking_other_interface = Case.objects.get(isdelete=True, id=data[
+            'case_id']).invoking_other_interface
+        isdelete = Case.objects.get(isdelete=True, id=data[
+            'case_id']).isdelete
+        try:
+            Case.objects.create(case_name=case_name,
+                                request_param=request_param,
+                                request_type=request_type, url=url,
+                                project_name=project_name,
+                                expected_result=expected_result,
+                                return_result=return_result,
+                                case_result=case_result,
+                                invoking_other_interface=invoking_other_interface,
+                                invoking_login=invoking_login,
+                                isdelete=isdelete)
+            logging.info('复制用例信息')
+        except Exception as e:
+            return e
+        i += 1
+        return Response('success')

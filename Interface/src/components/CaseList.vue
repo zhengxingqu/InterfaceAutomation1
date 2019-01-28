@@ -100,30 +100,21 @@
             <el-button class="small" size="small" @click="runCases()"
                        :loading=runs_status>批量运行
             </el-button>
-                        <el-button class="small" size="small" @click="makeCases()"
+            <el-button class="small" size="small" @click="makeCases()"
                        :loading=runs_status>生成测试用例
             </el-button>
-            <!--<el-button size="small" @click="dialogTableVisible = true">定时任务</el-button>-->
-
-<!--<el-dialog title="收货地址" :visible.sync="dialogTableVisible">-->
-  <!--<el-table :data="gridData">-->
-    <!--<el-table-column property="date" label="日期" width="150"></el-table-column>-->
-    <!--<el-table-column property="name" label="姓名" width="200"></el-table-column>-->
-    <!--<el-table-column property="address" label="地址"></el-table-column>-->
-  <!--</el-table>-->
-<!--</el-dialog>-->
-            <!--<el-dialog-->
-            <!--title="提示"-->
-            <!--:visible.sync="dialogVisible"-->
-            <!--width="30%"-->
-            <!--:modal-append-to-body='false'>-->
-            <!--<span>确定要删除该数据吗？</span>-->
-            <!--<span slot="footer" class="dialog-footer">-->
-            <!--<el-button @click="dialogVisible = false">取 消</el-button>-->
-            <!--<el-button type="primary" @click="removeBatch(val)">确 定</el-button>-->
-            <!--</span>-->
-            <!--</el-dialog>-->
-
+            <el-upload
+              class="upload-demo"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :on-preview="handlePreview"
+              :on-remove="handleRemove"
+              :before-remove="beforeRemove"
+              multiple
+              :limit="3"
+              :on-exceed="handleExceed"
+              :file-list="fileList">
+              <el-button size="small" type="primary">点击上传</el-button>
+            </el-upload>
           </el-form>
           <el-table
             :data="sites.slice((currentPage-1)*pageSize,currentPage*pageSize)"
@@ -162,29 +153,16 @@
                            style="border: transparent;background-color: transparent"
                            :loading=run_status><span
                   style="color: #71c7ad;">运行</span></el-button>
-                <!--<el-dialog-->
-                <!--title="提示"-->
-                <!--:visible.sync="dialogVisible"-->
-                <!--width="30%"-->
-                <!--:modal-append-to-body='false'>-->
-                <!--<span>确定要删除该数据吗？</span>-->
-                <!--<span slot="footer" class="dialog-footer">-->
-                <!--<el-button @click="dialogVisible = false">取 消</el-button>-->
-                <!--<el-button type="primary"-->
-                <!--@click="getDelete(scope.row.id)">确 定</el-button>-->
-                <!--</span>-->
-                <!--</el-dialog>-->
+                <el-button type="button" @click="copy(scope.row.id)"
+                           style="border: transparent;background-color: transparent"
+                           :loading=run_status><span
+                  style="color: #71c7ad;">复制</span></el-button>
               </template>
 
 
             </el-table-column>
           </el-table>
           <div class="block" style="margin-top: 30px;margin-left: 750px">
-            <!--<el-pagination-->
-            <!--:page-sizes="[5, 10, 20, 40]"-->
-            <!--layout="total, sizes, prev, pager, next, jumper"-->
-            <!--:total="totalNum">-->
-            <!--</el-pagination>-->
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
@@ -223,7 +201,8 @@
         delete_status: false,
         run_status: false,
         runs_status: false,
-        username: localStorage.username
+        username: localStorage.username,
+        fileList: []
 
 
       };
@@ -383,14 +362,36 @@
 
         }).catch((error) => {
 
-          if (error.response.status === 404){
-              this.$message({
-            type: 'warning',
-            message: '用例已被删除'
+          if (error.response.status === 404) {
+            this.$message({
+              type: 'warning',
+              message: '用例已被删除'
 
-          });
+            });
             this.getcase();
-            }
+          }
+          console.log(error)
+        })
+      },
+      copy: function (row) {
+        this.run_status = true;
+        this.$axios.post('copy/', {case_id: row}).then((res) => {
+          if (res.status === 500 || res.status === 404 || res.status === 201 || res.status === 417 || res.status === 200) {
+            this.run_status = false
+          }
+          console.log(res.data.results);
+          this.getcase()
+
+        }).catch((error) => {
+
+          if (error.status === 404) {
+            this.$message({
+              type: 'warning',
+              message: '用例已被删除'
+
+            });
+            this.getcase();
+          }
           console.log(error)
         })
       },
@@ -459,9 +460,9 @@
           });
           this.delete_status = true;
           this.$axios.put('delete_cases/', {"ids": this.case_list}).then((res) => {
-            if (res.data !== '') {
-              this.delete_status = false
-            }
+            if (res.status === 500 || res.status === 404 || res.status === 201 || res.status === 417 || res.status === 200) {
+            this.run_status = false
+          }
             console.log(res);
             this.getcase();
             this.$message({
@@ -487,28 +488,22 @@
           return ''
         }
       },
-
-
-      // open2() {
-      //   this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-      //     confirmButtonText: '确定',
-      //     cancelButtonText: '取消',
-      //     type: 'warning'
-      //   }).then(() => {
-      //     this.getDelete(id);
-      //     this.$message({
-      //       type: 'success',
-      //       message: '删除成功!'
-      //     });
-      //   }).catch(() => {
-      //     this.$message({
-      //       type: 'info',
-      //       message: '已取消删除'
-      //     });
-      //   });
-      // }
+      handleRemove(file, fileList) {
+        console.log(file, fileList);
+      },
+      handlePreview(file) {
+        console.log(file);
+      },
+      handleExceed(files, fileList) {
+        this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+      },
+      beforeRemove(file) {
+        return this.$confirm(`确定移除 ${file.name}？`);
+      }
     }
+
   }
+
 </script>
 
 <style scoped>
