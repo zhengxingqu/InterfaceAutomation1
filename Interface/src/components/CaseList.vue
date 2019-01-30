@@ -104,17 +104,22 @@
                        :loading=runs_status>生成测试用例
             </el-button>
             <el-upload
-              class="upload-demo"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              ref="upload"
+              action="http://127.0.0.1:8000/upload/"
+              name="picture"
+              list-type="picture-card"
+              :limit="1"
+              :file-list="fileList"
+              :on-exceed="onExceed"
+              :before-upload="beforeUpload"
               :on-preview="handlePreview"
-              :on-remove="handleRemove"
-              :before-remove="beforeRemove"
-              multiple
-              :limit="3"
-              :on-exceed="handleExceed"
-              :file-list="fileList">
-              <el-button size="small" type="primary">点击上传</el-button>
+              :on-success="handleSuccess"
+              :on-remove="handleRemove">
             </el-upload>
+            <el-dialog :visible.sync="dialogVisible">
+              <img width="100%" :src="dialogImageUrl" alt="">
+            </el-dialog>
+
           </el-form>
           <el-table
             :data="sites.slice((currentPage-1)*pageSize,currentPage*pageSize)"
@@ -202,8 +207,9 @@
         run_status: false,
         runs_status: false,
         username: localStorage.username,
-        fileList: []
-
+        fileList: [{name: '', url: ''}],
+        fileName: '',
+        dialogImageUrl: '',
 
       };
 
@@ -213,18 +219,6 @@
       this.getcase();
     },
     methods: {
-      handleSizeChange: function (size) {
-        this.pageSize = size;
-        console.log(this.pageSize);  //每页下拉显示数据
-        let t = (size / 10);
-        if (t <= 1) {
-          this.$axios.get('case_list/').then((res) => {
-            this.sites = res.data.results;
-          })
-
-        }
-
-      },
       runCases() {
         this.runs_status = true;
         this.multipleSelection.forEach(i => {
@@ -461,8 +455,8 @@
           this.delete_status = true;
           this.$axios.put('delete_cases/', {"ids": this.case_list}).then((res) => {
             if (res.status === 500 || res.status === 404 || res.status === 201 || res.status === 417 || res.status === 200) {
-            this.run_status = false
-          }
+              this.run_status = false
+            }
             console.log(res);
             this.getcase();
             this.$message({
@@ -488,22 +482,73 @@
           return ''
         }
       },
+      handleSuccess(res, file) {
+        this.$message({
+          type: 'info',
+          message: '文件上传成功',
+          duration: 6000
+        });
+        if (file.response.success) {
+          this.picture = file.response.message; //将返回的文件储存路径赋值picture字段
+        }
+        this.$axios.post('upload/', {filename: file.src})
+      },
+      //删除文件之前的钩子函数
       handleRemove(file, fileList) {
-        console.log(file, fileList);
+        this.$message({
+          type: 'info',
+          message: '已删除原有文件',
+          duration: 6000
+        });
       },
+      //点击列表中已上传的文件事的钩子函数
       handlePreview(file) {
-        console.log(file);
       },
-      handleExceed(files, fileList) {
-        this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+      //上传的文件个数超出设定时触发的函数
+      onExceed(files, fileList) {
+        this.$message({
+          type: 'info',
+          message: '最多只能上传一个文件',
+          duration: 6000
+        });
       },
-      beforeRemove(file) {
-        return this.$confirm(`确定移除 ${file.name}？`);
-      }
-    }
+      //文件上传前的前的钩子函数
+      //参数是上传的文件，若返回false，或返回Primary且被reject，则停止上传
+      beforeUpload(file) {
+        const isCSV = file.name.split('.')[1] === 'csv';
+        const isLt5M = file.size / 1024 / 1024 < 5;
 
+        if (!isCSV) {
+          this.$message.error('上传图片必须是csv 格式!');
+        }
+        if (!isLt5M) {
+          this.$message.error('上传图片大小不能超过 5MB!');
+        }
+        let formData = new FormData();
+        formData.append("file", file);
+        this.$axios.post('upload/', formData).then((res) => {
+          console.log(res.data)
+        }).catch((err) => {
+          this.$message.error('上传文件失败')
+        });
+
+        return isCSV && isLt5M;
+      },
+      handleSizeChange: function (size) {
+        this.pageSize = size;
+        console.log(this.pageSize);  //每页下拉显示数据
+        let t = (size / 10);
+        if (t <= 1) {
+          this.$axios.get('case_list/').then((res) => {
+            this.sites = res.data.results;
+          })
+
+        }
+
+      },
+
+    },
   }
-
 </script>
 
 <style scoped>

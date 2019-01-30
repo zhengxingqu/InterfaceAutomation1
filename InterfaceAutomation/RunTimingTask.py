@@ -7,11 +7,13 @@
 from myapp.models import TimingTask, Case
 from apscheduler.schedulers.blocking import BlockingScheduler
 from myapp.runScripts.RunAllCases import RunCases
+from myapp.runScripts.ReportEmail import ReportEmial
 
 run_times = TimingTask.objects.filter(isdelete=True, is_stop=u'正常')
 sched = BlockingScheduler()
 
 rc = RunCases()
+report = ReportEmial()
 
 
 def test():
@@ -19,6 +21,7 @@ def test():
     # t1()
     try:
         rc.post()
+        report.report()
     except Exception as e:
         print(e)
     # print('******************')

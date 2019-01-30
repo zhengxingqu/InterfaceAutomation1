@@ -30,7 +30,7 @@ axios.defaults.withCredentials = true;
 Vue.prototype.$bus = new Vue();
 Vue.prototype.$axios = axios;
 axios.defaults.baseURL = "http://127.0.0.1:8000/";
-// axios.defaults.baseURL = "http://121.196.217.69:8082/";
+// axios.defaults.baseURL = "http://121.196.217.69:8082";
 axios.defaults.headers.post['Content-Type'] = 'application/json; charset=UTF-8';
 axios.defaults.headers.get['Content-Type'] = 'application/json; charset=UTF-8';
 axios.defaults.headers.put['Content-Type'] = 'application/json; charset=UTF-8';

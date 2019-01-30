@@ -11,6 +11,7 @@ from rest_framework import status
 from rest_framework import filters, viewsets, mixins
 import logging
 import traceback
+import subprocess
 
 logging.basicConfig(filename='all.log', level=logging.INFO)
 
@@ -241,18 +242,6 @@ class GetReports(generics.ListAPIView):
 
 # 获取报告的详细信息
 class ReportDetails(generics.ListAPIView):
-    # def get(self, request):
-    # result = Report.objects.order_by('-test_time')[0:1].get().test_time
-    # results = ReportDetail.objects.filter(test_time=result)
-    # results_list = []
-    # result_dict = {}
-    # for item in results:
-    #     result_dict['case_name'] = item.case_name
-    #     result_dict['request_url'] = item.request_url
-    #     result_dict['result'] = item.result
-    #     results_list.append(result_dict)
-    # print(results_list)
-    # return Response(results_list)
     result_param = Report.objects.order_by('-test_time')[0:1].get().test_time
     queryset = ReportDetail.objects.filter(test_time=result_param)
     serializer_class = ReportDetailSerializer
@@ -363,4 +352,23 @@ class CopyCase(APIView):
         except Exception as e:
             return e
         i += 1
+        return Response('success')
+
+
+# 上传文件
+class Upload(APIView):
+    def post(self, request):
+        data = request.data
+        try:
+            with open(data['file'].name, 'wb') as f:
+                for line in data['file'].readlines():
+                    logging.info('创建前端传输的文件')
+                    f.write(line)
+        except Exception as e:
+            return e
+        command = "mv" + " " + "../" + str(data['file'].name) + " " + "/opt"
+        try:
+            subprocess.call(command)
+        except Exception as e:
+            print(e)
         return Response('success')

@@ -12,24 +12,6 @@
       </el-select>
       <el-table :data="select_time_list" style="margin-top: 20px;width: 100%"
                 stripe>
-        <!--<el-table-column type="expand">-->
-          <!--<template slot-scope="'props">-->
-            <!--<el-form label-position="left" inline class="demo-table-expand">-->
-              <!--<el-form-item label="用例名称"><span>{{props.row.case_name}}</span>-->
-              <!--</el-form-item>-->
-              <!--<el-form-item label="接口地址"><span>{{props.row.request_url}}</span>-->
-              <!--</el-form-item>-->
-              <!--<el-form-item label="请求方式"><span>{{props.row.request_type}}</span>-->
-                <!--<el-form-item label="测试结果">-->
-                  <!--<span>{{props.row.case_result}}</span></el-form-item>-->
-                <!--<el-form-item label="请求参数">-->
-                  <!--<span>{{props.row.request_param}}</span></el-form-item>-->
-                <!--<el-form-item label="返回结果">-->
-                  <!--<span>{{props.row.return_result}}</span></el-form-item>-->
-              <!--</el-form-item>-->
-            <!--</el-form>-->
-          <!--</template>-->
-        <!--</el-table-column>-->
       <el-table-column type="expand">
       <template slot-scope="props">
         <el-form label-position="left" inline class="demo-table-expand">
@@ -224,7 +206,7 @@
       barcolumn(id) {
         app.title = '坐标轴刻度与标签对齐';
 
-        this.charts = echarts.init(document.getElementById(id))
+        this.charts = echarts.init(document.getElementById(id));
         this.charts.setOption({
           color: ["#32CD32", "red"],
           tooltip: {

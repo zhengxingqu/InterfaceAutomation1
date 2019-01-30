@@ -73,7 +73,6 @@ class MakeCases(APIView):
                 document.add_page_break()
         except Exception as e:
             logging.info(e)
-        print(records)
         document.save(time.strftime("%Y-%m-%d %H:%M:%S",
                                     time.localtime(time.time())) + '.docx')
         return Response('success')
