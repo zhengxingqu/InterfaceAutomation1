@@ -366,9 +366,8 @@ class Upload(APIView):
                     f.write(line)
         except Exception as e:
             return e
-        command = "mv" + " " + "../" + str(data['file'].name) + " " + "/opt"
         try:
-            subprocess.call(command)
+            subprocess.call(["mv", str(data['file'].name), '/opt'])
         except Exception as e:
-            print(e)
+            return e
         return Response('success')
