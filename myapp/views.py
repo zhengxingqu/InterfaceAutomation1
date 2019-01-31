@@ -373,22 +373,25 @@ class Upload(APIView):
                 for line in data['file'].readlines():
                     logging.info('创建前端传输的文件')
                     f.write(line)
-            self.read_xlxs()
         except Exception as e:
             return e
         try:
             subprocess.call(["mv", str(data['file'].name), '/opt'])
         except Exception as e:
             return e
+        self.read_xlxs()
         return Response('success')
 
     def read_xlxs(self):
-        file_url = "/opt" + data['file'].name
+        # 获取excel表的行数
+        logging.info('获取excel表的行数')
+        file_url = "/opt/" + data['file'].name
         wb = load_workbook(filename=file_url)  ##读取路径
         ws = wb.get_sheet_by_name('staff')  ##读取名字为Sheet1的sheet表
         num = 1
 
         while 1:  # 设定为死循环
+            # 判断每一行的第一列的单元格的值是否存在
             cell = ws.cell(row=num, column=1).value
             if cell:
                 num = num + 1
@@ -397,6 +400,7 @@ class Upload(APIView):
                 break
         wb = xlrd.open_workbook(filename=file_url)
         sheet1 = wb.sheet_by_index(1)
+        # 获取填写行数的字段信息并创建case
         for i in range(1, num):
             rows = sheet1.row_values(1)
             try:
@@ -427,3 +431,4 @@ class Upload(APIView):
                     print(e)
             except Exception as e:
                 return e
+        return Response("success")
