@@ -52,7 +52,7 @@
                    label-width="0px" class="demo-ruleForm">
             <el-form-item prop="case_name">
               <label for="case_name"
-                     style="padding-left: 400px">项目名称：</label>
+                     style="padding-left: 400px">用例名称：</label>
               <el-input name="case_name" v-model="ruleForm.case_name"
                         style="width: 300px;"></el-input>
             </el-form-item>

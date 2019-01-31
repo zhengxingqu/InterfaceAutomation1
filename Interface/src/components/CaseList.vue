@@ -515,7 +515,7 @@
       //文件上传前的前的钩子函数
       //参数是上传的文件，若返回false，或返回Primary且被reject，则停止上传
       beforeUpload(file) {
-        const isCSV = file.name.split('.')[1] === 'csv';
+        const isCSV = file.name.split('.')[1] === 'xlsx';
         const isLt5M = file.size / 1024 / 1024 < 5;
 
         if (!isCSV) {

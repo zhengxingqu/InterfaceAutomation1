@@ -12,6 +12,12 @@ from rest_framework import filters, viewsets, mixins
 import logging
 import traceback
 import subprocess
+import xlrd
+from openpyxl import load_workbook
+import sys
+
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 logging.basicConfig(filename='all.log', level=logging.INFO)
 
@@ -338,6 +344,7 @@ class CopyCase(APIView):
         isdelete = Case.objects.get(isdelete=True, id=data[
             'case_id']).isdelete
         try:
+            logging.info('复制用例信息')
             Case.objects.create(case_name=case_name,
                                 request_param=request_param,
                                 request_type=request_type, url=url,
@@ -348,7 +355,7 @@ class CopyCase(APIView):
                                 invoking_other_interface=invoking_other_interface,
                                 invoking_login=invoking_login,
                                 isdelete=isdelete)
-            logging.info('复制用例信息')
+
         except Exception as e:
             return e
         i += 1
@@ -357,13 +364,16 @@ class CopyCase(APIView):
 
 # 上传文件
 class Upload(APIView):
+
     def post(self, request):
+        global data
         data = request.data
         try:
             with open(data['file'].name, 'wb') as f:
                 for line in data['file'].readlines():
                     logging.info('创建前端传输的文件')
                     f.write(line)
+            self.read_xlxs()
         except Exception as e:
             return e
         try:
@@ -371,3 +381,49 @@ class Upload(APIView):
         except Exception as e:
             return e
         return Response('success')
+
+    def read_xlxs(self):
+        file_url = "/opt" + data['file'].name
+        wb = load_workbook(filename=file_url)  ##读取路径
+        ws = wb.get_sheet_by_name('staff')  ##读取名字为Sheet1的sheet表
+        num = 1
+
+        while 1:  # 设定为死循环
+            cell = ws.cell(row=num, column=1).value
+            if cell:
+                num = num + 1
+            else:
+                num -= 1
+                break
+        wb = xlrd.open_workbook(filename=file_url)
+        sheet1 = wb.sheet_by_index(1)
+        for i in range(1, num):
+            rows = sheet1.row_values(1)
+            try:
+                # 获取对应字段数据
+                logging.info('获取excel中接口字段数据')
+                case_name = rows[0]
+                request_type = rows[1]
+                project_name = rows[2]
+                request_param = rows[3]
+                expected_result = rows[4]
+                url = rows[5]
+                invoking_login = rows[6]
+                invoking_other_interface = rows[7]
+                project_name = Project.objects.get(isdelete=True,
+                                                   project_name=project_name)
+
+                try:
+                    Case.objects.create(case_name=case_name,
+                                        request_type=request_type,
+                                        project_name=project_name,
+                                        request_param=request_param,
+                                        expected_result=expected_result,
+                                        url=url,
+                                        invoking_login=invoking_login,
+                                        invoking_other_interface=invoking_other_interface)
+                except Exception as e:
+                    logging.info(e)
+                    print(e)
+            except Exception as e:
+                return e
