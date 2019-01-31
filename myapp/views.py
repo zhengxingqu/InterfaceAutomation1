@@ -362,7 +362,7 @@ class CopyCase(APIView):
         return Response('success')
 
 
-# 上传文件
+# 上传文件,自动生成测试用例
 class Upload(APIView):
 
     def post(self, request):
@@ -426,6 +426,68 @@ class Upload(APIView):
                                         url=url,
                                         invoking_login=invoking_login,
                                         invoking_other_interface=invoking_other_interface)
+                except Exception as e:
+                    logging.info(e)
+                    print(e)
+            except Exception as e:
+                return e
+        return Response("success")
+
+
+# 上传文件，自动生成项目数据
+class UploadProject(APIView):
+
+    def post(self, request):
+        global data
+        data = request.data
+        try:
+            with open(data['file'].name, 'wb') as f:
+                for line in data['file'].readlines():
+                    logging.info('创建前端传输的文件')
+                    f.write(line)
+        except Exception as e:
+            return e
+        try:
+            subprocess.call(["mv", str(data['file'].name), '/opt'])
+        except Exception as e:
+            return e
+        self.read_xlxs()
+        return Response('success')
+
+    def read_xlxs(self):
+        # 获取excel表的行数
+        logging.info('获取excel表的行数')
+        file_url = "/opt/" + data['file'].name
+        wb = load_workbook(filename=file_url)  ##读取路径
+        ws = wb.get_sheet_by_name('staff')  ##读取名字为Sheet1的sheet表
+        num = 1
+
+        while 1:  # 设定为死循环
+            # 判断每一行的第一列的单元格的值是否存在
+            cell = ws.cell(row=num, column=1).value
+            if cell:
+                num = num + 1
+            else:
+                num -= 1
+                break
+        wb = xlrd.open_workbook(filename=file_url)
+        sheet1 = wb.sheet_by_index(1)
+        # 获取填写行数的字段信息并创建case
+        for i in range(1, num):
+            rows = sheet1.row_values(1)
+            try:
+                # 获取对应字段数据
+                logging.info('获取excel中接口字段数据')
+                project_name = rows[0]
+                login_way = rows[1]
+                permanent_address = rows[2]
+                request_header = rows[3]
+
+                try:
+                    Case.objects.create(project_name=project_name,
+                                        login_way=login_way,
+                                        permanent_address=permanent_address,
+                                        request_header=request_header)
                 except Exception as e:
                     logging.info(e)
                     print(e)

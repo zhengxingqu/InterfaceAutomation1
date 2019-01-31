@@ -527,7 +527,8 @@
         let formData = new FormData();
         formData.append("file", file);
         this.$axios.post('upload/', formData).then((res) => {
-          console.log(res.data)
+          console.log(res.data);
+          this.getcase()
         }).catch((err) => {
           this.$message.error('上传文件失败')
         });

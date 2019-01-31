@@ -58,7 +58,7 @@
           <el-dropdown>
             <i class="el-icon-setting" style="margin-right: 15px"></i>
             <el-dropdown-menu slot="dropdown">
-                           <el-dropdown-item>
+              <el-dropdown-item>
                 <router-link to="/login/" style="text-decoration: none;">退出
                 </router-link>
               </el-dropdown-item>
@@ -97,6 +97,22 @@
                        @click="removeBatch"
                        :loading=delete_status>批量删除
             </el-button>
+            <el-upload
+              ref="upload"
+              action="http://127.0.0.1:8000/upload/"
+              name="picture"
+              list-type="picture-card"
+              :limit="1"
+              :file-list="fileList"
+              :on-exceed="onExceed"
+              :before-upload="beforeUpload"
+              :on-preview="handlePreview"
+              :on-success="handleSuccess"
+              :on-remove="handleRemove">
+            </el-upload>
+            <el-dialog :visible.sync="dialogVisible">
+              <img width="100%" :src="dialogImageUrl" alt="">
+            </el-dialog>
             <!--<el-dialog-->
             <!--title="提示"-->
             <!--:visible.sync="dialogVisible"-->
@@ -199,7 +215,10 @@
         list1: [],
         delete_status: false,
         project_name: '',
-        username: localStorage.username
+        username: localStorage.username,
+        fileList: [{name: '', url: ''}],
+        fileName: '',
+        dialogImageUrl: '',
 
 
       };
@@ -431,6 +450,73 @@
           return ''
         }
       },
+      handleSuccess(res, file) {
+        this.$message({
+          type: 'info',
+          message: '文件上传成功',
+          duration: 6000
+        });
+        if (file.response.success) {
+          this.picture = file.response.message; //将返回的文件储存路径赋值picture字段
+        }
+        this.$axios.post('upload/', {filename: file.src})
+      },
+      //删除文件之前的钩子函数
+      handleRemove(file, fileList) {
+        this.$message({
+          type: 'info',
+          message: '已删除原有文件',
+          duration: 6000
+        });
+      },
+      //点击列表中已上传的文件事的钩子函数
+      handlePreview(file) {
+      },
+      //上传的文件个数超出设定时触发的函数
+      onExceed(files, fileList) {
+        this.$message({
+          type: 'info',
+          message: '最多只能上传一个文件',
+          duration: 6000
+        });
+      },
+      //文件上传前的前的钩子函数
+      //参数是上传的文件，若返回false，或返回Primary且被reject，则停止上传
+      beforeUpload(file) {
+        const isCSV = file.name.split('.')[1] === 'xlsx';
+        const isLt5M = file.size / 1024 / 1024 < 5;
+
+        if (!isCSV) {
+          this.$message.error('上传图片必须是csv 格式!');
+        }
+        if (!isLt5M) {
+          this.$message.error('上传图片大小不能超过 5MB!');
+        }
+        let formData = new FormData();
+        formData.append("file", file);
+        this.$axios.post('upload/', formData).then((res) => {
+          console.log(res.data);
+          this.getcase()
+        }).catch((err) => {
+          this.$message.error('上传文件失败')
+        });
+
+        return isCSV && isLt5M;
+      },
+      handleSizeChange: function (size) {
+        this.pageSize = size;
+        console.log(this.pageSize);  //每页下拉显示数据
+        let t = (size / 10);
+        if (t <= 1) {
+          this.$axios.get('case_list/').then((res) => {
+            this.sites = res.data.results;
+          })
+
+        }
+
+      },
+
+
     }
   }
 </script>
