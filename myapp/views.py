@@ -448,7 +448,7 @@ class UploadProject(APIView):
         except Exception as e:
             return e
         try:
-            subprocess.call(["mv", str(data['file'].name), '/opt'])
+            subprocess.call(["mv", "-f", str(data['file'].name), '/opt'])
         except Exception as e:
             return e
         self.read_xlxs()
@@ -484,10 +484,10 @@ class UploadProject(APIView):
                 request_header = rows[3]
 
                 try:
-                    Case.objects.create(project_name=project_name,
-                                        login_way=login_way,
-                                        permanent_address=permanent_address,
-                                        request_header=request_header)
+                    Project.objects.create(project_name=project_name,
+                                           login_way=login_way,
+                                           permanent_address=permanent_address,
+                                           request_header=request_header)
                 except Exception as e:
                     logging.info(e)
                     print(e)
