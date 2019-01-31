@@ -5,7 +5,7 @@ from myapp.views import InterfaceProject, InterfaceCase, UpdateProject, \
     SearchProject, SearchCase, UserList, SearchUser, UpdateUser, DeleteUser, \
     DeleteUsers, ResetPwd, CaseReport, SearchReport, GetReports, ReportDetails, \
     SearchReports, SearchTask, TimingTasks, DeleteTask, DeleteTasks, \
-    UpdateTaskStatus, CopyCase, Upload
+    UpdateTaskStatus, CopyCase, Upload, UploadProject
 from .runScripts import Register, RunCase, RunCases, TestCaseDoc
 from rest_framework_jwt.views import obtain_jwt_token
 
@@ -66,4 +66,5 @@ urlpatterns = [
         name='stop_task'),
     url(r'^copy/$', CopyCase.as_view(), name='copy_case'),
     url(r'^upload/$', Upload.as_view(), name='upload'),
+    url(r'^upload_project/$', UploadProject.as_view(), name='upload_project'),
 ]

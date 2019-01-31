@@ -494,7 +494,7 @@
         }
         let formData = new FormData();
         formData.append("file", file);
-        this.$axios.post('upload/', formData).then((res) => {
+        this.$axios.post('upload_project/', formData).then((res) => {
           console.log(res.data);
           this.getcase()
         }).catch((err) => {
