@@ -15,7 +15,6 @@ import os
 import datetime
 import sys
 
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # sys.path.insert(0, os.path.join(BASE_DIR, 'myapp'))
@@ -43,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'django_crontab',
+    'rest_framework_swagger',
 ]
 
 MIDDLEWARE = [
@@ -176,3 +176,18 @@ DATETIME_FORMAT = 'Y-m-d H:i:s'
 CRONJOBS = [
     ('33 15 * * *', 'InterfaceAutomation.RunTimingTask.test', '>>~/test.log')
 ]
+
+SWAGGER_SETTINGS = {
+    # 基础样式
+    'SECURITY_DEFINITIONS': {
+        "basic": {
+            'type': 'basic'
+        }
+    }
+}
+
+STATICFILES_DIRS = (
+
+    os.path.join(BASE_DIR, "static"),
+
+)

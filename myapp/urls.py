@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 from django.conf.urls import url
 from django.contrib import admin
 from myapp.views import InterfaceProject, InterfaceCase, UpdateProject, \
@@ -8,6 +9,13 @@ from myapp.views import InterfaceProject, InterfaceCase, UpdateProject, \
     UpdateTaskStatus, CopyCase, Upload, UploadProject
 from .runScripts import Register, RunCase, RunCases, TestCaseDoc
 from rest_framework_jwt.views import obtain_jwt_token
+from rest_framework.schemas import get_schema_view
+from rest_framework_swagger.renderers import SwaggerUIRenderer, OpenAPIRenderer
+from rest_framework.documentation import include_docs_urls
+
+schema_view = get_schema_view(title='Users API',
+                              renderer_classes=[OpenAPIRenderer,
+                                                SwaggerUIRenderer])
 
 urlpatterns = [
     url(r'^api-auth/$', obtain_jwt_token, name='login'),
@@ -67,4 +75,6 @@ urlpatterns = [
     url(r'^copy/$', CopyCase.as_view(), name='copy_case'),
     url(r'^upload/$', Upload.as_view(), name='upload'),
     url(r'^upload_project/$', UploadProject.as_view(), name='upload_project'),
+
+    url('docs/', include_docs_urls(title=u'文档')),
 ]

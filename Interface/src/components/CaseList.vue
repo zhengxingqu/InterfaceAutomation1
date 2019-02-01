@@ -207,7 +207,7 @@
         run_status: false,
         runs_status: false,
         username: localStorage.username,
-        // fileList: [{name: '', url: ''}],
+        fileList: [],
         fileName: '',
         dialogImageUrl: '',
 

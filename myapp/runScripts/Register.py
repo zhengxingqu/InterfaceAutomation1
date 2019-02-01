@@ -24,9 +24,6 @@ class Register(generics.ListCreateAPIView):
         try:
             # 创建用户信息
 
-            print(type(data['username']), type(data['sex']),
-                  type(data['iphone']))
-
             User.objects.create_user(username=data['username'],
                                      password=data['password'],
                                      sex=data['sex'], iphone=data['iphone'],

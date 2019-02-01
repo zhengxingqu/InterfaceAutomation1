@@ -216,7 +216,7 @@
         delete_status: false,
         project_name: '',
         username: localStorage.username,
-        // fileList: [{name: '', url: ''}],
+        fileList: [],
         fileName: '',
         dialogImageUrl: '',
 
