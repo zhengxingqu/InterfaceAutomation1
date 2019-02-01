@@ -101,7 +101,6 @@
               ref="upload"
               action="http://127.0.0.1:8000/upload/"
               name="picture"
-              list-type="picture-card"
               :limit="1"
               :file-list="fileList"
               :on-exceed="onExceed"
@@ -109,6 +108,7 @@
               :on-preview="handlePreview"
               :on-success="handleSuccess"
               :on-remove="handleRemove">
+              <el-button size="small" type="primary" style="margin-top: 10px">点击上传</el-button>
             </el-upload>
             <el-dialog :visible.sync="dialogVisible">
               <img width="100%" :src="dialogImageUrl" alt="">
@@ -216,7 +216,7 @@
         delete_status: false,
         project_name: '',
         username: localStorage.username,
-        fileList: [{name: '', url: ''}],
+        // fileList: [{name: '', url: ''}],
         fileName: '',
         dialogImageUrl: '',
 
@@ -496,6 +496,7 @@
         formData.append("file", file);
         this.$axios.post('upload_project/', formData).then((res) => {
           console.log(res.data);
+          this.$message.success('上传文件成功')
           this.getprojects()
         }).catch((err) => {
           console.log(err);
