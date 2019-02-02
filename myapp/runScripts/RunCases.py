@@ -1345,9 +1345,10 @@ class RunCases(APIView):
         global request_type, request_url, request_param, expected_result, \
             invoking_login, request_header, login_way, invoking_other_interface, number_id, case_name, test_time, numbers
         case_ids = request.data
-        test_time1 = (datetime.datetime.now() + datetime.timedelta(
-            hours=8))
+        test_time1 = datetime.datetime.now()
+
         test_time = datetime.datetime.strftime(test_time1, '%Y-%m-%d %H:%M:%S')
+        print(test_time1)
         try:
             for number_id in case_ids['ids']:
                 request_type = Case.objects.get(isdelete=True,

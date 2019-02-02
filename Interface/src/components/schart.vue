@@ -71,7 +71,7 @@
         reports: [],
         status_list: [],
         case_name: '',
-        request_url: ''
+        request_url: '',
       }
 
     },
@@ -103,6 +103,7 @@
         this.$axios.get('get_detail_report/').then((res) => {
           console.log(res);
           this.select_time_list = res.data.results
+
 
         }).catch((err) => {
           console.log(err)
@@ -251,8 +252,8 @@
     //调用
     mounted() {
       this.getreport();
-      this.get_time_report();
       this.get_reports();
+      this.get_time_report();
 
 
     },

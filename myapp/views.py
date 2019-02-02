@@ -248,8 +248,9 @@ class GetReports(generics.ListAPIView):
 
 # 获取报告的详细信息
 class ReportDetails(generics.ListAPIView):
-    result_param = Report.objects.order_by('-test_time')[0:1].get().test_time
-    queryset = ReportDetail.objects.filter(test_time=result_param)
+    result_param = Report.objects.order_by('-test_time')[0:1]
+    queryset = ReportDetail.objects.filter(
+        test_time=result_param.get().test_time)
     serializer_class = ReportDetailSerializer
 
 
