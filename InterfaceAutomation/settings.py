@@ -174,7 +174,8 @@ AUTH_USER_MODEL = "myapp.User"
 DATETIME_FORMAT = 'Y-m-d H:i:s'
 
 CRONJOBS = [
-    ('33 15 * * *', 'InterfaceAutomation.RunTimingTask.test', '>>~/test.log')
+    ('30 23 * * *', 'InterfaceAutomation.RunTimingTask.test', '>>~/test.log')
+    # ('*/1 * * * *', 'InterfaceAutomation.RunTimingTask.test', '>>~/test.log')
 ]
 
 SWAGGER_SETTINGS = {

@@ -8,6 +8,7 @@ import os
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'InterfaceAutomation.settings'
 
+
 class ReportEmial(object):
     def report(self):
         result_param = Report.objects.order_by('-test_time')[
@@ -23,7 +24,8 @@ class ReportEmial(object):
         psw = 'zcxyxujiyvhrcbci'
 
         subject = u'用例运行测试报告'
-        body = u'运行时间为' + result_param + u'通过个数' + pass_number + u'失败个数' + fail_number
+        body = "测试用例运行时间为:" + str(result_param) + "通过的测试用例为:" + str(
+            pass_number) + "失败的测试用例为" + str(fail_number)
         msg = MIMEText(body, "html", "utf-8")
         msg['from'] = sender_man
         msg['to'] = receiver

@@ -8,10 +8,10 @@ import re
 import logging
 import traceback
 
-logging.basicConfig(filename='runcase.log', level=logging.INFO)
 
 
-class RunCase(APIView):
+
+class %(classname)s(APIView):
     # 登陆接口返回数据
     def login(self):
         login_request_param = Case.objects.get(isdelete=True,
