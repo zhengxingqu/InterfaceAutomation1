@@ -114,7 +114,9 @@
               :on-preview="handlePreview"
               :on-success="handleSuccess"
               :on-remove="handleRemove">
-              <el-button size="small" type="primary" style="margin-top: 10px">点击上传</el-button>
+              <el-button size="small" type="primary" style="margin-top: 10px">
+                点击上传
+              </el-button>
             </el-upload>
             <el-dialog :visible.sync="dialogVisible">
               <img width="100%" :src="dialogImageUrl" alt="">
@@ -244,15 +246,33 @@
         this.multipleSelection.forEach(i => {
           this.case_list.push(i.id)
         });
-        this.$axios.post('make_cases/', {"ids": this.case_list}).then((res) => {
-          if (res.data.results !== '') {
-            this.runs_status = false
-          }
-          console.log(res);
-          this.getcase();
-          this.case_list.splice(0, this.case_list.length);
+        // this.$axios.post('make_cases/', {"ids": this.case_list}).then((res) => {
+        //   if (res.data.results !== '') {
+        //     this.runs_status = false
+        //   }
+        //   console.log(res);
+        //   this.getcase();
+        //   this.case_list.splice(0, this.case_list.length);
+        this.$axios({
+          method: 'post',
+          url: 'make_cases/',
+          data: {"ids": this.case_list},
+          responseType: 'blob'
+        }).then((response => {
+          console.log(response);
+          this.runs_status = false;
+          if (response.status === 200) {
+            let blob = new Blob([response.data], {type: 'application/msword'});
+            let objectUrl = URL.createObjectURL(blob);
+            let link = document.createElement("a");
+            let fname = `case.doc`; //下载文件的名字
+            link.href = objectUrl;
+            link.setAttribute("download", fname);
+            document.body.appendChild(link);
+            link.click();
 
-        }).catch((err) => {
+          }
+        })).catch((err) => {
           if (err.status !== '') {
             this.runs_status = false
           }
@@ -548,6 +568,20 @@
         }
 
       },
+      // 下载测试用例文件
+      download(data) {
+        if (!data) {
+          return
+        }
+        let url = window.URL.createObjectURL(new Blob([data]))
+        let link = document.createElement('a')
+        link.style.display = 'none'
+        link.href = url
+        link.setAttribute('download', 'case.doc');
+
+        document.body.appendChild(link)
+        link.click()
+      }
 
     },
   }

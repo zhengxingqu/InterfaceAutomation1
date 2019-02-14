@@ -37,7 +37,7 @@ class Project(models.Model):
 
 class Case(models.Model):
     case_name = models.CharField(max_length=100, default='',
-                                 verbose_name='测试用例名称')
+                                 verbose_name='测试用例名称', db_index=True)
     project_name = models.ForeignKey(Project, max_length=100,
                                      verbose_name='项目名称',
                                      related_name='testcase_project',

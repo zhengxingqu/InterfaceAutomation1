@@ -4,8 +4,10 @@ from docx import Document
 from rest_framework.views import APIView
 from ..models import Case, Project
 import logging
-from rest_framework.response import Response
 import time
+from django.http import FileResponse
+import subprocess
+import os
 
 
 class MakeCases(APIView):
@@ -73,6 +75,21 @@ class MakeCases(APIView):
                 document.add_page_break()
         except Exception as e:
             logging.info(e)
-        document.save(time.strftime("%Y-%m-%d %H:%M:%S",
-                                    time.localtime(time.time())) + '.docx')
-        return Response('success')
+        word_name = time.strftime("%Y-%m-%d %H:%M:%S",
+                                  time.localtime(time.time())) + '.doc'
+        document.save(word_name)
+        path = os.path.join(os.path.abspath(os.path.dirname(".")), word_name)
+        subprocess.call(['mv', '-f', path, '/docx'])
+        filenames = []
+        file = os.listdir('/docx')
+        for filename in file:
+            if filename.split('.')[1] == 'doc':
+                filenames.append(filename.split('.')[0])
+        max_doxs = max(filenames)
+        name = max_doxs + '.doc'
+        # subprocess.call(['mv', name, max])
+        file = open('/docx/' + name, 'rb')
+        response = FileResponse(file)
+        response['Content-Type'] = 'application/msword;charset=GB2312'
+        response['Content-Disposition'] = 'attachment;filename=' + name
+        return response
