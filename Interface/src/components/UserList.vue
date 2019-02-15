@@ -82,7 +82,7 @@
                    style="padding-left: 680px;padding-right: 5px">用例搜索</label>
             <el-input name="search_user_name" placeholder="用户名/手机号"
                       v-model="search_user" size="medium"
-                      style="width: 200px;padding-right: 36px"
+                      style="width: 200px;padding-right: 10px"
                       @change="search"></el-input>
             <el-button type="button" value="搜索" icon="el-icon-search"
                        @click="search">搜索

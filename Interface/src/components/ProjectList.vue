@@ -82,13 +82,11 @@
                    style="padding-left: 680px;padding-right: 5px">项目搜索</label>
             <el-input name="search_project_name" placeholder="项目名称/固定地址"
                       v-model="project_name" size="medium"
-                      style="width: 200px;padding-right: 36px"
+                      style="width: 200px;padding-right: 10px"
                       @change="search"></el-input>
             <el-button type="button" value="搜索" icon="el-icon-search"
                        @click="search">搜索
             </el-button>
-
-
             <br>
             <br>
             <div class="dxy-dividing-line"

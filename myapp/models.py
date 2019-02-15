@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.contrib.auth.models import AbstractUser
-
 from django.db import models
-import datetime
 
 
 # Create your models here.
@@ -51,8 +49,6 @@ class Case(models.Model):
     isdelete = models.CharField(max_length=10, default=True, verbose_name='状态')
     expected_result = models.CharField(max_length=300, default='',
                                        verbose_name='预期结果')
-    # login_way = models.CharField(max_length=50, default='',
-    #                              verbose_name='登陆方式')
     return_result = models.TextField(default='',
                                      verbose_name='接口运行返回结果')
     case_result = models.CharField(max_length=20, default='未开始',

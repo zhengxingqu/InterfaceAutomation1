@@ -11,7 +11,7 @@ import logging
 import traceback
 import threading
 
-logging.basicConfig(filename='runcases.log', level=logging.INFO)
+logging.basicConfig(filename='/var/log/runcases.log', level=logging.INFO)
 
 
 class RunCases(APIView):

@@ -19,7 +19,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-logging.basicConfig(filename='all.log', level=logging.INFO)
+logging.basicConfig(filename='/var/log/all.log', level=logging.INFO)
 
 
 # Create your views here.
@@ -370,6 +370,7 @@ class Upload(APIView):
         global data
         data = request.data
         try:
+            logging.info("打开文件")
             with open(data['file'].name, 'wb') as f:
                 for line in data['file'].readlines():
                     logging.info('创建前端传输的文件')
@@ -377,6 +378,7 @@ class Upload(APIView):
         except Exception as e:
             return e
         try:
+            # 移动所需文件到opt目录
             subprocess.call(["mv", str(data['file'].name), '/opt'])
         except Exception as e:
             return e
@@ -419,6 +421,7 @@ class Upload(APIView):
                                                    project_name=project_name)
 
                 try:
+                    logging.info("创建测试用例")
                     Case.objects.create(case_name=case_name,
                                         request_type=request_type,
                                         project_name=project_name,
@@ -429,7 +432,6 @@ class Upload(APIView):
                                         invoking_other_interface=invoking_other_interface)
                 except Exception as e:
                     logging.info(e)
-                    print(e)
             except Exception as e:
                 return e
         return Response("success")
@@ -442,6 +444,7 @@ class UploadProject(APIView):
         global data
         data = request.data
         try:
+            #
             with open(data['file'].name, 'wb') as f:
                 for line in data['file'].readlines():
                     logging.info('创建前端传输的文件')
@@ -459,8 +462,10 @@ class UploadProject(APIView):
         # 获取excel表的行数
         logging.info('获取excel表的行数')
         file_url = "/opt/" + data['file'].name
-        wb = load_workbook(filename=file_url)  ##读取路径
-        ws = wb.get_sheet_by_name('staff')  ##读取名字为Sheet1的sheet表
+        # 读取路径
+        wb = load_workbook(filename=file_url)
+        # 读取名字为case的sheet表
+        ws = wb.get_sheet_by_name('case')
         num = 1
 
         while 1:  # 设定为死循环
@@ -485,6 +490,7 @@ class UploadProject(APIView):
                 request_header = rows[3]
 
                 try:
+                    logging.info("创建项目信息")
                     Project.objects.create(project_name=project_name,
                                            login_way=login_way,
                                            permanent_address=permanent_address,

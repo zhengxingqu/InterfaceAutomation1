@@ -82,7 +82,7 @@
                    style="padding-left: 680px;padding-right: 5px">用例搜索</label>
             <el-input name="search_case_name" placeholder="测试用例名称/运行结果"
                       v-model="search_case" size="medium"
-                      style="width: 200px;padding-right: 36px"
+                      style="width: 200px;padding-right: 10px"
                       @change="search"></el-input>
             <el-button type="button" value="搜索" icon="el-icon-search"
                        @click="search">搜索
@@ -243,17 +243,12 @@
       },
       makeCases() {
         this.runs_status = true;
+        this.case_list = [];
         this.multipleSelection.forEach(i => {
           this.case_list.push(i.id)
         });
-        // this.$axios.post('make_cases/', {"ids": this.case_list}).then((res) => {
-        //   if (res.data.results !== '') {
-        //     this.runs_status = false
-        //   }
-        //   console.log(res);
-        //   this.getcase();
-        //   this.case_list.splice(0, this.case_list.length);
         this.$axios({
+          // 需指定返回类型为blob
           method: 'post',
           url: 'make_cases/',
           data: {"ids": this.case_list},
@@ -568,20 +563,7 @@
         }
 
       },
-      // 下载测试用例文件
-      download(data) {
-        if (!data) {
-          return
-        }
-        let url = window.URL.createObjectURL(new Blob([data]))
-        let link = document.createElement('a')
-        link.style.display = 'none'
-        link.href = url
-        link.setAttribute('download', 'case.doc');
 
-        document.body.appendChild(link)
-        link.click()
-      }
 
     },
   }

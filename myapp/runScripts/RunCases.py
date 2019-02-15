@@ -9,7 +9,7 @@ import datetime
 import logging
 import traceback
 
-logging.basicConfig(filename='runcases.log', level=logging.INFO)
+logging.basicConfig(filename='/var/log/runcases.log', level=logging.INFO)
 
 
 class RunCases(APIView):
@@ -1348,7 +1348,6 @@ class RunCases(APIView):
         test_time1 = datetime.datetime.now()
 
         test_time = datetime.datetime.strftime(test_time1, '%Y-%m-%d %H:%M:%S')
-        print(test_time1)
         try:
             for number_id in case_ids['ids']:
                 request_type = Case.objects.get(isdelete=True,
@@ -1442,28 +1441,6 @@ class RunCases(APIView):
                 if invoking_login != '' and request_type == 'delete' and \
                         invoking_other_interface != '':
                     self.delete_login_invoking_interface()
-                # threads = []
-                # print('开始时间为' + datetime.datetime.now().strftime('%Y%m%d %H%M%S'))
-                # for i in numbers:
-                #     t = threading.Thread(target=self.select_run_method, args='')
-                #     threads.append(t)
-                #
-                # for i in numbers:
-                #     print(i)
-                #     threads[i].start()
-                #
-                # for i in numbers:
-                #     print(i)
-                #     threads[i].join()
-                #
-                # print('结束时间为' + datetime.datetime.now().strftime('%Y%m%d %H%M%S'))
-
-                # Report.objects.create(pass_number=RunCases.pass_number,
-                #                       fail_number=RunCases.fail_number,
-                #                       test_time=test_time)
-                # RunCases.pass_number = 0
-                # RunCases.fail_number = 0
-
         except Exception:
             logging.INFO(traceback.format_exc())
         # 不用登陆、不调用其他接口返回信息的情况下
@@ -1476,59 +1453,3 @@ class RunCases(APIView):
         RunCases.pass_number = 0
         RunCases.fail_number = 0
         return Response('success')
-
-    # def select_run_method(self):
-    #     if invoking_login == '' and request_type == 'get' and \
-    #             invoking_other_interface == '':
-    #         self.get_no_login_case()
-    #     if invoking_login == '' and request_type == 'post' and \
-    #             invoking_other_interface == '':
-    #         self.post_no_login_case()
-    #     if invoking_login == '' and request_type == 'put' and \
-    #             invoking_other_interface == '':
-    #         self.put_no_login_case()
-    #     if invoking_login == '' and request_type == 'delete' and \
-    #             invoking_other_interface == '':
-    #         self.delete_no_login_case()
-    #
-    #     # 不用登陆、调用其他接口返回信息的情况下
-    #     if invoking_login == '' and request_type == 'get' and \
-    #             invoking_other_interface != '':
-    #         self.get_nologin_invoking_interface()
-    #     if invoking_login == '' and request_type == 'post' and \
-    #             invoking_other_interface != '':
-    #         self.post_nologin_invoking_interface()
-    #     if invoking_login == '' and request_type == 'put' and \
-    #             invoking_other_interface != '':
-    #         self.put_nologin_invoking_interface()
-    #     if invoking_login == '' and request_type == 'delete' and \
-    #             invoking_other_interface != '':
-    #         self.delete_nologin_invoking_interface()
-    #
-    #     # 要登陆、不调用其他接口返回信息的情况下
-    #     if invoking_login != '' and request_type == 'get' and \
-    #             invoking_other_interface == '':
-    #         self.get_login_no_invoking_interface()
-    #     if invoking_login != '' and request_type == 'post' and \
-    #             invoking_other_interface == '':
-    #         self.post_login_no_invoking_interface()
-    #     if invoking_login != '' and request_type == 'put' and \
-    #             invoking_other_interface == '':
-    #         self.put_login_no_invoking_interface()
-    #     if invoking_login != '' and request_type == 'delete' and \
-    #             invoking_other_interface == '':
-    #         self.delete_login_no_invoking_interface()
-    #
-    #     # 要登陆、调用其他接口返回信息的情况下
-    #     if invoking_login != '' and request_type == 'get' and \
-    #             invoking_other_interface != '':
-    #         self.get_login_invoking_interface()
-    #     if invoking_login != '' and request_type == 'post' and \
-    #             invoking_other_interface != '':
-    #         self.post_login_invoking_interface()
-    #     if invoking_login != '' and request_type == 'put' and \
-    #             invoking_other_interface != '':
-    #         self.put_login_invoking_interface()
-    #     if invoking_login != '' and request_type == 'delete' and \
-    #             invoking_other_interface != '':
-    #         self.delete_login_invoking_interface()

@@ -3,7 +3,6 @@
 from myapp.models import Report
 import smtplib
 from email.mime.text import MIMEText
-from email.header import Header
 import os
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'InterfaceAutomation.settings'
@@ -30,7 +29,6 @@ class ReportEmial(object):
         msg['from'] = sender_man
         msg['to'] = receiver
         msg['subject'] = subject
-
         smtp = smtplib.SMTP_SSL(smtpserver, port)
         smtp.login(sender_man, psw)
         smtp.sendmail(sender_man, receiver, msg.as_string())
